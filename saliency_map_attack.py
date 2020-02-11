@@ -177,17 +177,21 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
     # domain_in: the tensor that holds the latest search domain
     # cond_in: the boolean tensor to show if more iteration is needed for
     #          generating adversarial samples
-    def condition(x_in, y_in, domain_in, i_in, cond_in):
+    def condition(x_in, y_in, domain_in, i_in, cond_in, predictions):
         # Repeat the loop until we have achieved misclassification or
         # reaches the maximum iterations
         return tf.logical_and(tf.less(i_in, max_iters), cond_in)
 
     # Same loop variables as above
-    def body(x_in, y_in, domain_in, i_in, cond_in):
+    def body(x_in, y_in, domain_in, i_in, cond_in, predictions):
         # Create graph for model logits and predictions
         logits = model.get_logits(x_in)
         preds = tf.nn.softmax(logits)
         preds_onehot = tf.one_hot(tf.argmax(preds, axis=1), depth=nb_classes)
+        tensor1 = tf.zeros((1,i_in*10))
+        tensor2 = tf.zeros((1,(max_iters - 1 - i_in)*10))
+        reshaped_preds = tf.concat([tensor1,preds,tensor2],1)
+        predictions = tf.add(predictions, reshaped_preds)
 
         # create the Jacobian graph
         list_derivatives = []
@@ -270,12 +274,14 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
         i_out = tf.add(i_in, 1)
         cond_out = reduce_any(cond)
 
-        return x_out, y_in, domain_out, i_out, cond_out
+        return x_out, y_in, domain_out, i_out, cond_out, predictions
+
+    empty_predictions = tf.zeros((1,nb_classes*max_iters))
 
     # Run loop to do JSMA
-    x_adv, _, _, _, _ = tf.while_loop(
+    x_adv, _, _, _, _, predictions = tf.while_loop(
         condition,
-        body, [x, y_target, search_domain, 0, True],
+        body, [x, y_target, search_domain, 0, True, empty_predictions],
         parallel_iterations=1)
 
-    return x_adv
+    return x_adv, predictions
