@@ -29,6 +29,4 @@ mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
 x_train, y_train = mnist.get_set('train')
 x_test, y_test = mnist.get_set('test')
 
-print(y_train.shape)
-
-model_training(model, "lenet-mnist.joblib", x_train, y_train, x_test, y_test)
+model_training(model, "le_net_cleverhans_model.joblib", x_train, y_train, x_test, y_test)
