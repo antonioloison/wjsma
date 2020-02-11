@@ -13,9 +13,8 @@ NB_FILTERS = 64
 CLEAN_TRAIN = True
 
 
-def model_training(model, x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS, batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE, num_threads=None, label_smoothing=0.1):
+def model_training(model, save_path, x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS, batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE, num_threads=None, label_smoothing=0.1):
     """
-
     :param model:
     :param x_train:
     :param y_train:
@@ -70,6 +69,6 @@ def model_training(model, x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS,
     train(sess, loss, x_train, y_train, evaluate=evaluate, args=train_params, var_list=model.get_params())
 
     with sess.as_default():
-        save("joblibs/lenet-mnist.joblib", model)
+        save(save_path, model)
 
         print("Now that the model has been saved, you can evaluate it on the new_jsma_method")
