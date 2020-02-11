@@ -2,31 +2,33 @@ from cleverhans.train import train
 from cleverhans.utils_tf import model_eval
 from cleverhans.loss import CrossEntropy
 from cleverhans.serial import save
+from cleverhans.picklable_model import PicklableModel
 
 import tensorflow as tf
+import numpy as np
 
 
 NB_EPOCHS = 6
 BATCH_SIZE = 128
 LEARNING_RATE = .001
-NB_FILTERS = 64
-CLEAN_TRAIN = True
 
 
-def model_training(model, x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS, batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE, num_threads=None, label_smoothing=0.1):
+def model_training(model: PicklableModel, file_name: str, x_train: np.array, y_train: np.array, x_test: np.array, y_test: np.array,
+                   nb_epochs: int = NB_EPOCHS, batch_size: int = BATCH_SIZE, learning_rate: int = LEARNING_RATE,
+                   num_threads: int = None, label_smoothing: float = 0.1):
     """
-
-    :param model:
-    :param x_train:
-    :param y_train:
-    :param x_test:
-    :param y_test:
-    :param nb_epochs:
-    :param batch_size:
-    :param learning_rate:
-    :param num_threads:
-    :param label_smoothing:
-    :return:
+    Trains the model with the specified parameters
+    :param model: the cleverhans picklable model
+    :param file_name: the name of the joblib file
+    :param x_train: the input train array
+    :param y_train: the output train array
+    :param x_test: the input test array
+    :param y_test: the output test array
+    :param nb_epochs: the number of epoch
+    :param batch_size: the size of each batch
+    :param learning_rate: the optimizer learning rate
+    :param num_threads: the number of threads (None to run on the main thread)
+    :param label_smoothing: the amount of smoothing used
     """
 
     if num_threads:
@@ -70,6 +72,4 @@ def model_training(model, x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS,
     train(sess, loss, x_train, y_train, evaluate=evaluate, args=train_params, var_list=model.get_params())
 
     with sess.as_default():
-        save("joblibs/lenet-mnist.joblib", model)
-
-        print("Now that the model has been saved, you can evaluate it on the new_jsma_method")
+        save("joblibs/" + file_name, model)

@@ -1,10 +1,10 @@
 """
-LeNet5 architecture
+LeNet5 architecture from MNIST
 """
 
 from cleverhans.dataset import MNIST
 from cleverhans.picklable_model import Conv2D, ReLU, Flatten, Linear, Softmax, MLP
-from utils.cleverhans_utils import MaxPooling2D
+from models.cleverhans_utils import MaxPooling2D
 
 from models.model_training import model_training
 
@@ -29,4 +29,6 @@ mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
 x_train, y_train = mnist.get_set('train')
 x_test, y_test = mnist.get_set('test')
 
-model_training(model, x_train, y_train, x_test, y_test)
+print(y_train.shape)
+
+model_training(model, "lenet-mnist.joblib", x_train, y_train, x_test, y_test)
