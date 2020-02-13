@@ -20,7 +20,7 @@ def cifar10_save_attacks(weighted, set_type, first_index, last_index):
                      MODEL_PATH,
                      'test',
                      CIFAR10,
-                     True,
+                     weighted,
                      test_start=first_index,
                      test_end=last_index)
     elif set_type == 'train':
@@ -28,7 +28,7 @@ def cifar10_save_attacks(weighted, set_type, first_index, last_index):
                      MODEL_PATH,
                      set_type,
                      CIFAR10,
-                     True,
+                     weighted,
                      train_start=first_index,
                      train_end=last_index)
     else:
