@@ -2,6 +2,8 @@
 Generate images for the MNIST dataset
 """
 
+import argparse
+
 from cleverhans.dataset import MNIST
 
 from white_box.generate_attacks import generate_attacks
@@ -9,8 +11,6 @@ from white_box.generate_attacks import generate_attacks
 
 MODEL_PATH = '../../models/joblibs/le_net_cleverhans_model.joblib'
 
-def main():
-    mnist_save_attacks(True, 'test', first_index=0, last_index=100)
 
 def mnist_save_attacks(weighted, set_type, first_index, last_index):
     if weighted:
@@ -37,4 +37,11 @@ def mnist_save_attacks(weighted, set_type, first_index, last_index):
         raise('Invalid set type')
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--weighted', type=bool, default=False)
+    parser.add_argument('--dataset', type=str, default='test')
+    parser.add_argument('--first_index', type=int, default=0)
+    parser.add_argument('--last_index', type=float, default=10000)
+    args = parser.parse_args()
+
+    mnist_save_attacks(args.weighted, args.dataset, args.first_index, args.last_index)
