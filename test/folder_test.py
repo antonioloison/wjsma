@@ -67,5 +67,32 @@ def same_originals(folder_path_1, folder_path_2):
             return False, i
     return True
 
+# print(same_originals(r"D:\nn_robustness\le_net_5_final\targeted\test\mnist_simple_test",
+#                      r"D:\nn_robustness\le_net_5_final\targeted\test\mnist_weighted_test"))
+
+def all_the_same(folder_path_1, folder_path_2):
+    """
+    Test if corespondent images in folder are
+    :param folder_path_1: path of first folder
+    :param folder_path_2: path of second folder
+    :return: True if same originals, False and index where the difference is if immages are different
+    """
+    length1 = len(next(os.walk(folder_path_1))[2])
+    length2 = len(next(os.walk(folder_path_2))[2])
+    def attack_type(path):
+        if 'simple' in path:
+            return 'simple'
+        elif 'weighted' in path:
+            return 'weighted'
+    attack_type1, attack_type2 = attack_type(folder_path_1), attack_type(folder_path_2)
+    for i in range(min(length1,length2)):
+        csv1 = pd.read_csv(folder_path_1 + '\\' + attack_type1 + '_image_' + str(i) + '.csv')
+        csv2 = pd.read_csv(folder_path_2 + '\\' + attack_type2 + '_image_' + str(i) + '.csv')
+        image1 = csv1.values
+        image2 = csv2.values
+        if not(np.array_equal(image1,image2)):
+            return False, i
+    return True
+
 # print(same_originals(r"C:\Users\Antonio\Projects\wjsma\white_box\mnist\mnist_simple_test",
-#                      r"C:\Users\Antonio\Projects\wjsma\white_box\mnist\mnist_weighted_test"))
+#                      r"C:\Users\Antonio\Projects\wjsma\white_box\mnist\mnist_2_simple_test"))
