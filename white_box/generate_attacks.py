@@ -47,11 +47,11 @@ def generate_attacks(save_path, filepath, set_type, dataset, weighted,
     # Get MNIST test data
     dataset = dataset(train_start=train_start, train_end=train_end, test_start=test_start, test_end=test_end)
 
+    x_set, y_set = dataset.get_set(set_type)
+
     if set_type == 'train':
-        x_set, y_set = dataset.get_set('train')
         first_index, last_index = train_start, train_end
     elif set_type == 'test':
-        x_set, y_set = dataset.get_set('train')
         first_index, last_index = test_start, test_end
 
     # Use Image Parameters
