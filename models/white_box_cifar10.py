@@ -6,23 +6,23 @@ from models.cleverhans_utils import MaxPooling2D
 from models.model_training import model_training
 
 layers = [Conv2D(64, (3, 3), (1, 1), "SAME"),
-            ReLU(),
-            Conv2D(128, (3, 3), (1, 1), "SAME"),
-            ReLU(),
-            MaxPooling2D((2, 2), (2, 2), "VALID"),
-            Conv2D(128, (3, 3), (1, 1), "SAME"),
-            ReLU(),
-            Conv2D(256, (3, 3), (1, 1), "SAME"),
-            ReLU(),
-            MaxPooling2D((2, 2), (2, 2), "VALID"),
-            Conv2D(256, (3, 3), (1, 1), "SAME"),
-            ReLU(),
-            Conv2D(512, (3, 3), (1, 1), "SAME"),
-            ReLU(),
-            MaxPooling2D((2, 2), (2, 2), "VALID"),
-            Conv2D(10, (3, 3), (1, 1), "SAME"),
-            GlobalAveragePool(),
-            Softmax()]
+          ReLU(),
+          Conv2D(128, (3, 3), (1, 1), "SAME"),
+          ReLU(),
+          MaxPooling2D((2, 2), (2, 2), "VALID"),
+          Conv2D(128, (3, 3), (1, 1), "SAME"),
+          ReLU(),
+          Conv2D(256, (3, 3), (1, 1), "SAME"),
+          ReLU(),
+          MaxPooling2D((2, 2), (2, 2), "VALID"),
+          Conv2D(256, (3, 3), (1, 1), "SAME"),
+          ReLU(),
+          Conv2D(512, (3, 3), (1, 1), "SAME"),
+          ReLU(),
+          MaxPooling2D((2, 2), (2, 2), "VALID"),
+          Conv2D(10, (3, 3), (1, 1), "SAME"),
+          GlobalAveragePool(),
+          Softmax()]
 
 model = MLP(layers, (None, 32, 32, 3))
 
@@ -33,4 +33,5 @@ x_test, y_test = cifar10.get_set('test')
 y_train = y_train.reshape((50000, 10))
 y_test = y_test.reshape((10000, 10))
 
-model_training(model, "white_box_cifar10.joblib", x_train, y_train, x_test, y_test)
+model_training(model, "white_box_cifar10.joblib", x_train, y_train, x_test, y_test, nb_epochs=10, batch_size=128,
+               learning_rate=.001, label_smoothing=0.1)
