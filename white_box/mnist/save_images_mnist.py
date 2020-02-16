@@ -4,10 +4,13 @@ Generate images for the MNIST dataset
 
 import argparse
 
+import sys
+
+sys.path.append('/usr/users/gpupro/gpupro_gzeller/venv/wjsma/white_box')
+
 from cleverhans.dataset import MNIST
 
-from white_box.generate_attacks import generate_attacks
-
+from generate_attacks import generate_attacks
 
 MODEL_PATH = '../../models/joblibs/le_net_cleverhans_model.joblib'
 
@@ -40,8 +43,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--weighted', type=bool, default=False)
     parser.add_argument('--dataset', type=str, default='test')
-    parser.add_argument('--first_index', type=int, default=12)
-    parser.add_argument('--last_index', type=float, default=13)
+    parser.add_argument('--first_index', type=int, default=0)
+    parser.add_argument('--last_index', type=int, default=10000)
     args = parser.parse_args()
 
     mnist_save_attacks(args.weighted, args.dataset, args.first_index, args.last_index)

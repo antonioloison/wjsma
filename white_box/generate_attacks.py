@@ -8,6 +8,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import sys
+
+sys.path.append('/usr/users/gpupro/gpupro_gzeller/venv/wjsma')
+
 import logging
 
 import warnings
@@ -50,12 +54,13 @@ def generate_attacks(save_path, filepath, set_type, dataset, weighted,
     # Get MNIST test data
     dataset = dataset(train_start=0, train_end=60000, test_start=0, test_end=10000)
 
+
     x_set, y_set = dataset.get_set(set_type)
 
     if set_type == 'train':
         first_index, last_index = train_start, train_end
     elif set_type == 'test':
-        first_index, last_index = test_start, test_end
+	first_index, last_index = test_start, test_end
 
     # Use Image Parameters
     img_rows, img_cols, nchannels = x_set.shape[1:4]
