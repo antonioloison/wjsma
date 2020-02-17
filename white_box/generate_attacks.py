@@ -60,7 +60,7 @@ def generate_attacks(save_path, filepath, set_type, dataset, weighted,
     if set_type == 'train':
         first_index, last_index = train_start, train_end
     elif set_type == 'test':
-	first_index, last_index = test_start, test_end
+        first_index, last_index = test_start, test_end
 
     # Use Image Parameters
     img_rows, img_cols, nchannels = x_set.shape[1:4]

@@ -2,12 +2,17 @@
 Generate images for the MNIST dataset
 """
 
+import argparse
+
 from cleverhans.dataset import CIFAR10
 
 from white_box.generate_attacks import generate_attacks
 
+import sys
 
-MODEL_PATH = '../../models/joblibs/cifar10_model.joblib'
+sys.path.append(r'C:\Users\Antonio\Projects\wjsma\models')
+
+MODEL_PATH = '../../models/joblibs/white_box_cifar10.joblib'
 
 
 def cifar10_save_attacks(weighted, set_type, first_index, last_index):

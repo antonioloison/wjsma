@@ -3,7 +3,6 @@ import sys
 sys.path.append('/usr/users/gpupro/gpupro_gzeller/venv/wjsma/models')
 
 from cleverhans.dataset import CIFAR10
-
 from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool
 from cleverhans_utils import MaxPooling2D
 
