@@ -136,3 +136,5 @@ dmypy.json
 # file: ~/.gitignore_global
 .DS_Store
 .idea
+
+white_box/mnist/mnist_simple_train

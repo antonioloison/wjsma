@@ -15,7 +15,7 @@ LEARNING_RATE = .001
 
 def model_training(model: PicklableModel, file_name: str, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
                    y_test: np.ndarray, nb_epochs: int = NB_EPOCHS, batch_size: int = BATCH_SIZE,
-                   learning_rate: int = LEARNING_RATE, num_threads: int = None, label_smoothing: float = 0.1):
+                   learning_rate: float = LEARNING_RATE, num_threads: int = None, label_smoothing: float = 0.1):
     """
     Trains the model with the specified parameters
     :param model: the cleverhans picklable model

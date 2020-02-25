@@ -29,4 +29,4 @@ mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
 x_train, y_train = mnist.get_set('train')
 x_test, y_test = mnist.get_set('test')
 
-model_training(model, "le_net_cleverhans_model.joblib", x_train, y_train, x_test, y_test)
+model_training(model, "le_net_cleverhans_model.joblib", x_train, y_train, x_test, y_test, nb_epochs=10, batch_size=128, learning_rate=0.001)
