@@ -13,9 +13,9 @@ BATCH_SIZE = 128
 LEARNING_RATE = .001
 
 
-def model_training(model: PicklableModel, file_name: str, x_train: np.array, y_train: np.array, x_test: np.array, y_test: np.array,
-                   nb_epochs: int = NB_EPOCHS, batch_size: int = BATCH_SIZE, learning_rate: int = LEARNING_RATE,
-                   num_threads: int = None, label_smoothing: float = 0.1):
+def model_training(model: PicklableModel, file_name: str, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
+                   y_test: np.ndarray, nb_epochs: int = NB_EPOCHS, batch_size: int = BATCH_SIZE,
+                   learning_rate: int = LEARNING_RATE, num_threads: int = None, label_smoothing: float = 0.1):
     """
     Trains the model with the specified parameters
     :param model: the cleverhans picklable model
@@ -35,6 +35,7 @@ def model_training(model: PicklableModel, file_name: str, x_train: np.array, y_t
         config_args = dict(intra_op_parallelism_threads=1)
     else:
         config_args = {}
+
     sess = tf.Session(config=tf.ConfigProto(**config_args))
 
     img_rows, img_cols, nchannels = x_train.shape[1:4]
@@ -59,7 +60,7 @@ def model_training(model: PicklableModel, file_name: str, x_train: np.array, y_t
         Run the evaluation and print the results.
         """
         acc = model_eval(sess, x, y, preds, x_set, y_set, args=eval_params)
-        print('%s accuracy on %s examples: %0.4f' % (accuracy_type,'legitimate', acc))
+        print('%s accuracy on %s examples: %0.4f' % (accuracy_type, 'legitimate', acc))
 
     def evaluate():
         """

@@ -36,4 +36,4 @@ x_test, y_test = cifar10.get_set('test')
 y_train = y_train.reshape((50000, 10))
 y_test = y_test.reshape((10000, 10))
 
-model_training(model, "cifar10.joblib", x_train, y_train, x_test, y_test)
+model_training(model, "cifar10.joblib", x_train, y_train, x_test, y_test, nb_epochs=20)
