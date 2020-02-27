@@ -1,50 +1,36 @@
 """
-Generate images for the MNIST dataset
+Generate images for the CIFAR10 dataset
 """
-
-import argparse
 
 from cleverhans.dataset import CIFAR10
 
 from white_box.generate_attacks import generate_attacks
 
-import sys
-
-sys.path.append(r'C:\Users\Antonio\Projects\wjsma\models')
-
-MODEL_PATH = '../../models/joblibs/white_box_cifar10.joblib'
-
 
 def cifar10_save_attacks(weighted, set_type, first_index, last_index):
+    """
+    Generate attacks over the clean CIFAR10 model
+    :param weighted: switches between JSMA and WJSMA
+    :param set_type: either "train" or "test"
+    :param first_index: the first sample index
+    :param last_index: the last sample index
+    :return:
+    """
+
     if weighted:
-        attack_type = 'weighted'
+        attack_type = "weighted"
     else:
-        attack_type = 'simple'
-    if set_type == 'test':
-        generate_attacks('cifar10_' + attack_type + '_' + set_type,
-                     MODEL_PATH,
-                     'test',
-                     CIFAR10,
-                     weighted,
-                     test_start=first_index,
-                     test_end=last_index)
-    elif set_type == 'train':
-        generate_attacks('cifar10_' + attack_type + '_' + set_type,
-                     MODEL_PATH,
-                     set_type,
-                     CIFAR10,
-                     weighted,
-                     train_start=first_index,
-                     train_end=last_index)
+        attack_type = "simple"
+
+    if weighted:
+        attack_type = "weighted"
     else:
-        raise('Invalid set type')
+        attack_type = "simple"
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--weighted', type=bool, default=False)
-    parser.add_argument('--dataset', type=str, default='test')
-    parser.add_argument('--first_index', type=int, default=0)
-    parser.add_argument('--last_index', type=int, default=10000)
-    args = parser.parse_args()
+    mnist = CIFAR10(train_start=0, train_end=50000, test_start=0, test_end=10000)
+    x_set, y_set = mnist.get_set(set_type)
 
-    cifar10_save_attacks(args.weighted, args.dataset, args.first_index, args.last_index)
+    y_set = y_set.reshape((y_set.shape[0], 10))
+
+    generate_attacks("white_box/cifar10/" + attack_type + "_" + set_type, "models/joblibs/cifar10.joblib",
+                     x_set, y_set, weighted, first_index, last_index)

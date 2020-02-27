@@ -2,49 +2,28 @@
 Generate images for the MNIST dataset
 """
 
-import argparse
-
-import sys
-
-sys.path.append('/usr/users/gpupro/gpupro_gzeller/venv/wjsma/white_box')
-
 from cleverhans.dataset import MNIST
 
-from generate_attacks import generate_attacks
-
-MODEL_PATH = '../../models/joblibs/le_net_cleverhans_model.joblib'
+from white_box.generate_attacks import generate_attacks
 
 
 def mnist_save_attacks(weighted, set_type, first_index, last_index):
+    """
+    Generate attacks over the clean MNIST model
+    :param weighted: switches between JSMA and WJSMA
+    :param set_type: either "train" or "test"
+    :param first_index: the first sample index
+    :param last_index: the last sample index
+    :return:
+    """
+
     if weighted:
-        attack_type = 'weighted'
+        attack_type = "weighted"
     else:
-        attack_type = 'simple'
-    if set_type == 'test':
-        generate_attacks('mnist_' + attack_type + '_' + set_type,
-                     MODEL_PATH,
-                     'test',
-                     MNIST,
-                     weighted,
-                     test_start=first_index,
-                     test_end=last_index)
-    elif set_type == 'train':
-        generate_attacks('mnist_' + attack_type + '_' + set_type,
-                     MODEL_PATH,
-                     set_type,
-                     MNIST,
-                     weighted,
-                     train_start=first_index,
-                     train_end=last_index)
-    else:
-        raise('Invalid set type')
+        attack_type = "simple"
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--weighted', type=bool, default=False)
-    parser.add_argument('--dataset', type=str, default='test')
-    parser.add_argument('--first_index', type=int, default=0)
-    parser.add_argument('--last_index', type=int, default=10000)
-    args = parser.parse_args()
+    mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
+    x_set, y_set = mnist.get_set(set_type)
 
-    mnist_save_attacks(args.weighted, args.dataset, args.first_index, args.last_index)
+    generate_attacks("white_box/mnist/" + attack_type + "_" + set_type, "models/joblibs/mnist_clean.joblib",
+                     x_set, y_set, weighted, first_index, last_index)

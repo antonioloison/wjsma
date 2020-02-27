@@ -1,4 +1,4 @@
-from saliency_map_attack import *
+from attack.saliency_map_attack import *
 
 from cleverhans.serial import load
 from cleverhans.dataset import MNIST

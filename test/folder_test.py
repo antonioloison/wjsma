@@ -8,7 +8,7 @@ import numpy as np
 
 import os
 
-from cleverhans.dataset import MNIST
+from cleverhans.dataset import MNIST, CIFAR10
 
 
 def original_column(csv):
@@ -42,7 +42,7 @@ def different_images(folder_path):
             counter += 1
     return len(image_list) == len(set(image_list))
 
-# print(different_images(r"D:\nn_robustness\le_net_5_final\targeted\test\mnist_simple_test"))
+# print(different_images(r"D:\nn_robustness\le_net_5_final\targeted\test\simple_test"))
 
 def same_originals(folder_path_1, folder_path_2):
     """
@@ -70,8 +70,8 @@ def same_originals(folder_path_1, folder_path_2):
             return False, i
     return True
 
-# print(same_originals(r"D:\nn_robustness\le_net_5_final\targeted\test\mnist_simple_test",
-#                      r"D:\nn_robustness\le_net_5_final\targeted\test\mnist_weighted_test"))
+# print(same_originals(r"D:\nn_robustness\le_net_5_final\targeted\test\simple_test",
+#                      r"D:\nn_robustness\le_net_5_final\targeted\test\weighted_test"))
 
 def all_the_same(folder_path_1, folder_path_2):
     """
@@ -97,7 +97,7 @@ def all_the_same(folder_path_1, folder_path_2):
             return False, i
     return True
 
-# print(same_originals(r"C:\Users\Antonio\Projects\wjsma\white_box\mnist\mnist_simple_test",
+# print(same_originals(r"C:\Users\Antonio\Projects\wjsma\white_box\mnist\simple_test",
 #                      r"C:\Users\Antonio\Projects\wjsma\white_box\mnist\mnist_2_simple_test"))
 
 def same_originals_to_dataset(folder_path, set_type, dataset):

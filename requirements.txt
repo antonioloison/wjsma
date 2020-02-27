@@ -3,3 +3,4 @@ cleverhans
 tensorflow==1.15.2
 joblib
 keras==2.1.0
+pandas
