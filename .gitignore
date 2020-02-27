@@ -136,3 +136,12 @@ dmypy.json
 # file: ~/.gitignore_global
 .DS_Store
 .idea
+
+white_box/mnist/simple_test
+white_box/mnist/simple_train
+white_box/mnist/weighted_test
+white_box/mnist/weighted_train
+white_box/cifar10/simple_test
+white_box/cifar10/simple_train
+white_box/cifar10/weighted_test
+white_box/cifar10/weighted_train
