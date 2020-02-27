@@ -16,7 +16,7 @@ def generate_extra_set(weighted):
     if weighted:
         path = "white_box/mnist/weighted_test/weighted_image_"
     else:
-        path = "white_box/mnist/simple_train/simple_image_"
+        path = "white_box/mnist/simple_test/simple_image_"
 
     for index in range(10000):
         df = pandas.read_csv(path + str(index) + ".csv")
