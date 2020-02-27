@@ -64,10 +64,10 @@ elif args.job == "test":
     else:
         raise ValueError("Invalid dataset")
 elif args.job == "attack":
-    if args.settype != "test" or args.settype != "train":
+    if args.settype != "test" and args.settype != "train":
         raise ValueError("Invalid set type")
 
-    if args.weighted != "true" or args.weighted != "false":
+    if args.weighted != "true" and args.weighted != "false":
         raise ValueError("Weighted argument is invalid")
 
     if args.dataset == "mnist":
@@ -89,7 +89,7 @@ elif args.job == "attack":
     else:
         raise ValueError("Invalid dataset")
 elif args.job == "augment":
-    if args.weighted != "true" or args.weighted != "false":
+    if args.weighted != "true" and args.weighted != "false":
         raise ValueError("Weighted argument is invalid")
 
     from defense.sample_selection import generate_extra_set
