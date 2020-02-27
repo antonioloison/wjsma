@@ -8,6 +8,7 @@ COUNT = 2000
 def generate_extra_set(weighted):
     """
     Generates the extra dataset
+    :param weighted: switches between JSMA and WJSMA samples
     """
 
     samples = [[] for _ in range(10)]
@@ -17,9 +18,7 @@ def generate_extra_set(weighted):
     else:
         path = "white_box/mnist/simple_train/simple_image_"
 
-    index = 0
-
-    while min([len(samples[k]) for k in range(10)]):
+    for index in range(10000):
         df = pandas.read_csv(path + str(index) + ".csv")
         np = df.to_numpy()
 
@@ -30,8 +29,6 @@ def generate_extra_set(weighted):
                 samples[label].append(np[:784, i].reshape((28, 28)))
 
         print([len(samples[k]) for k in range(10)])
-
-        index += 1
 
     x_set = []
 
