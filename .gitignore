@@ -145,3 +145,5 @@ white_box/cifar10/simple_test
 white_box/cifar10/simple_train
 white_box/cifar10/weighted_test
 white_box/cifar10/weighted_train
+
+defense/augmented
