@@ -43,8 +43,8 @@ def model_train(weighted):
         x_add = np.load("defense/augmented/x_simple.npy")
         y_add = np.load("defense/augmented/y_simple.npy")
 
-    x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0)
-    y_train = np.concatenate((y_train, y_add), axis=0)
+    x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0).astype(np.float32)
+    y_train = np.concatenate((y_train, y_add), axis=0).astype(np.float32)
 
     if weighted:
         model_training(model, "mnist_defense_weighted.joblib", x_train, y_train, x_test, y_test, nb_epochs=10,
