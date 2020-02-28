@@ -26,12 +26,13 @@ def average_stat(folder):
             average_iteration += np[1954, i]
             average_distortion += np[1955, i]
 
-            if np[1956, i] == 1.0:
+            if np[1955, i] < 0.145:
                 total_samples_successful += 1
 
                 average_iteration_successful += np[1954, i]
                 average_distortion_successful += np[1955, i]
 
+    print(folder)
     print("----------------------")
     print("SUCCESS RATE (MISS CLASSIFIED):", total_samples_successful / total_samples)
     print("AVERAGE ITERATION:", average_iteration / total_samples)
@@ -39,4 +40,4 @@ def average_stat(folder):
     print("----------------------")
     print("AVERAGE SUCCESSFUL ITERATION:", average_iteration_successful / total_samples_successful)
     print("AVERAGE SUCCESSFUL DISTORTION:", average_distortion_successful / total_samples_successful)
-    print("----------------------")
+    print("----------------------\n")
