@@ -147,3 +147,12 @@ white_box/cifar10/weighted_test
 white_box/cifar10/weighted_train
 
 defense/augmented
+defense/mnist_defense_simple/simple_test
+defense/mnist_defense_simple/simple_train
+defense/mnist_defense_simple/weighted_test
+defense/mnist_defense_simple/weighted_train
+defense/mnist_defense_weighted/simple_test
+defense/mnist_defense_weighted/simple_train
+defense/mnist_defense_weighted/weighted_test
+defense/mnist_defense_weighted/weighted_train
+
