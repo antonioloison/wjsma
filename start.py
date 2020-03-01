@@ -89,12 +89,15 @@ elif args.job == "attack":
     else:
         raise ValueError("Invalid dataset")
 elif args.job == "augment":
+    if args.settype != "test" and args.settype != "train":
+        raise ValueError("Invalid set type")
+
     if args.weighted != "true" and args.weighted != "false":
         raise ValueError("Weighted argument is invalid")
 
     from defense.sample_selection import generate_extra_set
 
-    generate_extra_set(args.weighted == "true")
+    generate_extra_set(args.settype, args.weighted == "true")
 elif args.job == "stats":
     if args.settype != "test" and args.settype != "train":
         raise ValueError("Invalid set type")
