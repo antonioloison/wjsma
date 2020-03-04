@@ -47,6 +47,12 @@ def generate_extra_set(set_type, weighted):
     y = numpy.array([x_set[k][1] for k in range(len(x_set))])
 
     if weighted:
+        old_x = numpy.load("defense/augmented/x_weighted.npy")
+        old_y = numpy.load("defense/augmented/y_weighted.npy")
+
+        x = numpy.concatenate((old_x, x), axis=0)
+        y = numpy.concatenate((old_y, y), axis=0)
+
         numpy.save("defense/augmented/x_weighted.npy", x)
         numpy.save("defense/augmented/y_weighted.npy", y)
     else:
