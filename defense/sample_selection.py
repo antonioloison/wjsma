@@ -15,7 +15,7 @@ def generate_extra_set(set_type, weighted):
     samples = [[] for _ in range(10)]
 
     if weighted:
-        path = "white_box/mnist/weighted_" + set_type + "/weighted_image_"
+        path = "defense/mnist_defense_weighted/weighted_" + set_type + "/weighted_image_"
     else:
         path = "white_box/mnist/simple_" + set_type + "/simple_image_"
 
