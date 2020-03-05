@@ -38,11 +38,11 @@ def model_train(weighted):
     x_test, y_test = mnist.get_set('test')
 
     if weighted:
-        x_add = np.load("defense/augmented/x_weighted.npy")
-        y_add = np.load("defense/augmented/y_weighted.npy")
+        x_add = np.load("defense/augmented/x_weighted.npy")[:20000]
+        y_add = np.load("defense/augmented/y_weighted.npy")[:20000]
     else:
-        x_add = np.load("defense/augmented/x_simple.npy")
-        y_add = np.load("defense/augmented/y_simple.npy")
+        x_add = np.load("defense/augmented/x_simple.npy")[:20000]
+        y_add = np.load("defense/augmented/y_simple.npy")[:20000]
 
     x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0).astype(np.float32)
     y_train = np.concatenate((y_train, y_add), axis=0).astype(np.float32)
@@ -66,11 +66,11 @@ def model_test(weighted):
     x_test, y_test = mnist.get_set('test')
 
     if weighted:
-        x_add = np.load("defense/augmented/x_weighted.npy")
-        y_add = np.load("defense/augmented/y_weighted.npy")
+        x_add = np.load("defense/augmented/x_weighted.npy")[:20000]
+        y_add = np.load("defense/augmented/y_weighted.npy")[:20000]
     else:
-        x_add = np.load("defense/augmented/x_simple.npy")
-        y_add = np.load("defense/augmented/y_simple.npy")
+        x_add = np.load("defense/augmented/x_simple.npy")[:20000]
+        y_add = np.load("defense/augmented/y_simple.npy")[:20000]
 
     x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0).astype(np.float32)
     y_train = np.concatenate((y_train, y_add), axis=0).astype(np.float32)
