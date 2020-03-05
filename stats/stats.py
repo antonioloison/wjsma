@@ -20,6 +20,12 @@ def average_stat(folder):
         df = pandas.read_csv(folder + file)
         np = df.to_numpy()
 
+        first_class = np.argmax(df.iloc[784:(784 + 10), 0].values)
+        good_prediction = (int(df.columns[0][-6]) == first_class)
+
+        if not good_prediction:
+            continue
+
         for i in range(9):
             total_samples += 1
 
@@ -34,6 +40,7 @@ def average_stat(folder):
 
     print(folder)
     print("----------------------")
+    print("WELL PREDICTED ORIGINAL SAMPLES:", total_samples)
     print("SUCCESS RATE (MISS CLASSIFIED):", total_samples_successful / total_samples)
     print("AVERAGE ITERATION:", average_iteration / total_samples)
     print("AVERAGE DISTORTION:", average_distortion / total_samples)
