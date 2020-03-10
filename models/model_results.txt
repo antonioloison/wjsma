@@ -1,0 +1,9 @@
+MNIST LeNet:
+
+Accuracy train : 100%
+Test : 99.49%
+
+CIFAR10 WhiteBox AllConvolutional:
+
+Accuracy train : 99.96%
+Test : 83.81%

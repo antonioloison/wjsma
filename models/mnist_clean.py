@@ -34,7 +34,7 @@ def model_train():
     x_train, y_train = mnist.get_set('train')
     x_test, y_test = mnist.get_set('test')
 
-    model_training(model, "mnist_clean.joblib", x_train, y_train, x_test, y_test, nb_epochs=10, batch_size=128,
+    model_training(model, "mnist_clean.joblib", x_train, y_train, x_test, y_test, nb_epochs=20, batch_size=128,
                    learning_rate=0.001)
 
 
