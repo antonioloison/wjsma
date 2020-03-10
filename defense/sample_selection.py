@@ -5,18 +5,19 @@ import numpy
 COUNT = 2000
 
 
-def generate_extra_set(weighted):
+def generate_extra_set(set_type, weighted):
     """
     Generates the extra dataset
+    :param set_type: either train or test
     :param weighted: switches between JSMA and WJSMA samples
     """
 
     samples = [[] for _ in range(10)]
 
     if weighted:
-        path = "white_box/mnist/weighted_test/weighted_image_"
+        path = "defense/mnist_defense_weighted/weighted_" + set_type + "/weighted_image_"
     else:
-        path = "white_box/mnist/simple_test/simple_image_"
+        path = "white_box/mnist/simple_" + set_type + "/simple_image_"
 
     for index in range(10000):
         df = pandas.read_csv(path + str(index) + ".csv")

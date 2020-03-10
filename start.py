@@ -89,11 +89,69 @@ elif args.job == "attack":
     else:
         raise ValueError("Invalid dataset")
 elif args.job == "augment":
+    if args.settype != "test" and args.settype != "train":
+        raise ValueError("Invalid set type")
+
     if args.weighted != "true" and args.weighted != "false":
         raise ValueError("Weighted argument is invalid")
 
     from defense.sample_selection import generate_extra_set
 
-    generate_extra_set(args.weighted == "true")
+    generate_extra_set(args.settype, args.weighted == "true")
+elif args.job == "stats":
+    if args.settype != "test" and args.settype != "train":
+        raise ValueError("Invalid set type")
+
+    if args.weighted != "true" and args.weighted != "false":
+        raise ValueError("Weighted argument is invalid")
+
+    from stats.stats import average_stat
+
+    if args.dataset == "mnist":
+        if args.settype == "test":
+            if args.weighted == "false":
+                average_stat("white_box/mnist/simple_test/")
+            else:
+                average_stat("white_box/mnist/weighted_test/")
+        else:
+            if args.weighted == "false":
+                average_stat("white_box/mnist/simple_train/")
+            else:
+                average_stat("white_box/mnist/weighted_train/")
+    elif args.dataset == "cifar10":
+        if args.settype == "test":
+            if args.weighted == "false":
+                average_stat("white_box/cifar10/simple_test/")
+            else:
+                average_stat("white_box/cifar10/weighted_test/")
+        else:
+            if args.weighted == "false":
+                average_stat("white_box/cifar10/simple_train/")
+            else:
+                average_stat("white_box/cifar10/weighted_train/")
+    elif args.dataset == "mnist-defense-simple":
+        if args.settype == "test":
+            if args.weighted == "false":
+                average_stat("defense/mnist_defense_simple/simple_test/")
+            else:
+                average_stat("defense/mnist_defense_simple/weighted_test/")
+        else:
+            if args.weighted == "false":
+                average_stat("defense/mnist_defense_simple/simple_train/")
+            else:
+                average_stat("defense/mnist_defense_simple/weighted_train/")
+    elif args.dataset == "mnist-defense-weighted":
+        if args.settype == "test":
+            if args.weighted == "false":
+                average_stat("defense/mnist_defense_weighted/simple_test/")
+            else:
+                average_stat("defense/mnist_defense_weighted/weighted_test/")
+        else:
+            if args.weighted == "false":
+                average_stat("defense/mnist_defense_weighted/simple_train/")
+            else:
+                average_stat("defense/mnist_defense_weighted/weighted_train/")
+    else:
+        raise ValueError("Invalid dataset")
 else:
     raise ValueError("Invalid job")
