@@ -14,7 +14,7 @@ For reproduction, you can use the script `start.py` to run every tasks used in t
 
 ### Job examples
 
-####Models
+#### Models
 
 To create a new LeNet5 model and train it on the original MNIST dataset
 
@@ -24,9 +24,13 @@ To test an existing LeNet5 model trained over the original MNIST dataset
 
 `python start.py --job test --dataset mnist`
 
+#### Adversarial examples generation
+
 To generate WJSMA adversarial samples against the previously trained LeNet5 model over the train set of the MNIST dataset
 
 `python start.py --job attack --dataset mnist --settype train --weighted true --firstindex 0 --lastindex 10000`
+
+#### Defenses
 
 To generate the augmented MNIST dataset using the previously crafted adversarial samples (note that you can only augment the original MNIST dataset)
 
@@ -39,6 +43,8 @@ To train a new LeNet5 model and train it on the augmented MNIST dataset
 To generate WJSMA adversarial samples against the newly trained LeNet5 model over the test set of the MNIST dataset
 
 `python start.py --job attack --dataset mnist-defense-weighted --settype test --weighted true --firstindex 0 -- lastindex 10000`
+
+#### Analyze attack and model performances
 
 To print out the performances of our model previously attacked
 
