@@ -14,6 +14,8 @@ For reproduction, you can use the script `start.py` to run every tasks used in t
 
 ### Job examples
 
+####Models
+
 To create a new LeNet5 model and train it on the original MNIST dataset
 
 `python start.py --job train --dataset mnist`
