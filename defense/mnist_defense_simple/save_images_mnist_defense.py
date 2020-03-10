@@ -4,7 +4,7 @@ Generate images for the MNIST dataset
 
 from cleverhans.dataset import MNIST
 
-from white_box.generate_attacks import generate_attacks
+from attack.generate_attacks import generate_attacks
 
 
 def mnist_defense_save_attacks(weighted, set_type, first_index, last_index):

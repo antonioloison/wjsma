@@ -1,5 +1,5 @@
 """
-LeNet5 architecture from MNIST
+LeNet5 architecture from MNIST trained with the augmented dataset
 """
 
 from cleverhans.dataset import MNIST
@@ -65,7 +65,7 @@ def model_test(weighted):
     x_train, y_train = mnist.get_set('train')
     x_test, y_test = mnist.get_set('test')
 
-    print("CLEAN SET")
+    print("ORIGINAL MNIST TEST")
 
     if weighted:
         model_testing("mnist_defense_weighted.joblib", x_train, y_train, x_test, y_test)
@@ -82,7 +82,8 @@ def model_test(weighted):
     x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0).astype(np.float32)
     y_train = np.concatenate((y_train, y_add), axis=0).astype(np.float32)
 
-    print("FULL SET")
+    print("====================")
+    print("AUGMENTED MNIST TEST")
 
     if weighted:
         model_testing("mnist_defense_weighted.joblib", x_train, y_train, x_test, y_test)

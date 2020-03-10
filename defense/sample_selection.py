@@ -1,26 +1,29 @@
 import pandas
 import random
 import numpy
+import os
 
-COUNT = 2000
+
+SAMPLE_COUNT = 2000
 
 
-def generate_extra_set(set_type, weighted):
+def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
     """
     Generates the extra dataset
     :param set_type: either train or test
     :param weighted: switches between JSMA and WJSMA samples
+    :param sample_per_class: the number of adversarial samples per class
     """
 
     samples = [[] for _ in range(10)]
 
     if weighted:
-        path = "defense/mnist_defense_weighted/weighted_" + set_type + "/weighted_image_"
+        path = "attack/mnist/weighted_" + set_type + "/"
     else:
-        path = "white_box/mnist/simple_" + set_type + "/simple_image_"
+        path = "attack/mnist/simple_" + set_type + "/"
 
-    for index in range(10000):
-        df = pandas.read_csv(path + str(index) + ".csv")
+    for file in os.listdir(path):
+        df = pandas.read_csv(path + file)
         np = df.to_numpy()
 
         label = int(df.columns[0][-6])
@@ -36,7 +39,10 @@ def generate_extra_set(set_type, weighted):
     for k in range(10):
         random.shuffle(samples[k])
 
-        samples[k] = samples[k][:COUNT]
+        if len(samples[k]) < sample_per_class:
+            raise ValueError("Not enough samples to create the augmented dataset")
+
+        samples[k] = samples[k][:sample_per_class]
 
         for sample in samples[k]:
             x_set.append([sample, one_hot(k)])

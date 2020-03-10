@@ -137,14 +137,14 @@ dmypy.json
 .DS_Store
 .idea
 
-white_box/mnist/simple_test
-white_box/mnist/simple_train
-white_box/mnist/weighted_test
-white_box/mnist/weighted_train
-white_box/cifar10/simple_test
-white_box/cifar10/simple_train
-white_box/cifar10/weighted_test
-white_box/cifar10/weighted_train
+attack/mnist/simple_test
+attack/mnist/simple_train
+attack/mnist/weighted_test
+attack/mnist/weighted_train
+attack/cifar10/simple_test
+attack/cifar10/simple_train
+attack/cifar10/weighted_test
+attack/cifar10/weighted_train
 
 defense/augmented
 defense/mnist_defense_simple/simple_test

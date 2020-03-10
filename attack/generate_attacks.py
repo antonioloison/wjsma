@@ -1,6 +1,5 @@
 """
-This script evaluates trained models that have been saved to the filesystem and saves each attack in one csv file
-per image attacked
+Generates the adversarial samples against the specified model and saves each attack in a single CSV file
 """
 
 import tensorflow as tf
@@ -16,8 +15,7 @@ from cleverhans.utils_tf import model_argmax
 from cleverhans.serial import load
 
 
-def generate_attacks(save_path, filepath, x_set, y_set, weighted,
-                     first_index, last_index):
+def generate_attacks(save_path, filepath, x_set, y_set, weighted, first_index, last_index):
     """
     Run evaluation on a saved model
     :param save_path: path where attacks will be saved

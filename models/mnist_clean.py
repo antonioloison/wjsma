@@ -9,9 +9,13 @@ from models.cleverhans_utils import MaxPooling2D
 from models.model_utls import model_training, model_testing
 
 
-def model_train():
+FILE_NAME = "le-net5.joblib"
+
+
+def model_train(file_name=FILE_NAME):
     """
     Creates the joblib of LeNet-5 over the MNIST dataset
+    :param file_name: the name of the joblib file
     """
 
     layers = [
@@ -34,17 +38,18 @@ def model_train():
     x_train, y_train = mnist.get_set('train')
     x_test, y_test = mnist.get_set('test')
 
-    model_training(model, "mnist_clean.joblib", x_train, y_train, x_test, y_test, nb_epochs=20, batch_size=128,
+    model_training(model, file_name, x_train, y_train, x_test, y_test, nb_epochs=20, batch_size=128,
                    learning_rate=0.001)
 
 
-def model_test():
+def model_test(file_name=FILE_NAME):
     """
     Runs the evaluation and prints out the results
+    :param file_name: the name of the joblib file
     """
 
     mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
     x_train, y_train = mnist.get_set('train')
     x_test, y_test = mnist.get_set('test')
 
-    model_testing("mnist_clean.joblib", x_train, y_train, x_test, y_test)
+    model_testing(file_name, x_train, y_train, x_test, y_test)
