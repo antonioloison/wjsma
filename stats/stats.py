@@ -1,12 +1,27 @@
+"""
+Computation of the statistics of the generated attacks in folder
+"""
+
 import pandas
 import os
 
 
-def average_stat(folder):
+def average_stat(folder, with_max_threshold=True):
     """
     Prints out the stats of the attack
     :param folder: the csv folder
     """
+    if "mnist" in folder:
+        image_size = 784
+        max_distortion = 0.145
+        max_iter = int(image_size * max_distortion / 200)
+    elif "cifar10" in folder:
+        image_size = 3072
+        max_distortion = 0.037
+        max_iter = int(image_size * max_distortion / 200)
+    else:
+        raise ValueError(
+            "Invalid folder name, it must have the name of the dataset somewhere either 'mnist' or 'cifar10'")
 
     average_distortion = 0
     average_distortion_successful = 0
@@ -20,7 +35,7 @@ def average_stat(folder):
         df = pandas.read_csv(folder + file)
         np = df.to_numpy()
 
-        first_class = np.argmax(df.iloc[784:(784 + 10), 0].values)
+        first_class = np.argmax(df.iloc[image_size:(image_size + 10), 0].values)
         good_prediction = (int(df.columns[0][-6]) == first_class)
 
         if not good_prediction:
@@ -29,14 +44,18 @@ def average_stat(folder):
         for i in range(9):
             total_samples += 1
 
-            average_iteration += np[1954, i]
-            average_distortion += np[1955, i]
+            if with_max_threshold:
+                average_iteration += min(np[-3, i], max_iter)
+                average_distortion += min(np[-2, i], max_distortion)
+            else:
+                average_iteration += np[-3, i]
+                average_distortion += np[-2, i]
 
-            if np[1955, i] < 0.145:
+            if np[-2, i] < max_distortion:
                 total_samples_successful += 1
 
-                average_iteration_successful += np[1954, i]
-                average_distortion_successful += np[1955, i]
+                average_iteration_successful += np[-3, i]
+                average_distortion_successful += np[-2, i]
 
     print(folder)
     print("----------------------")
