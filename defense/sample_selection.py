@@ -1,3 +1,6 @@
+"""
+Create extra dataset to train a defended model
+"""
 import pandas
 import random
 import numpy
