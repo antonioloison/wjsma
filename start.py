@@ -167,6 +167,5 @@ if __name__ == "__main__":
             from visualisation.show_image import main
 
             main(args.visual)
-
     else:
         raise ValueError("Invalid job")
