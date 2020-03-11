@@ -6,11 +6,6 @@ from cleverhans.dataset import MNIST
 
 from attack.generate_attacks import generate_attacks
 
-TRAIN_START = 0
-TRAIN_END = 60000
-TEST_START = 0
-TEST_END = 10000
-
 
 def mnist_save_attacks(weighted, set_type, first_index, last_index):
     """
@@ -26,7 +21,7 @@ def mnist_save_attacks(weighted, set_type, first_index, last_index):
     else:
         attack_type = "simple"
 
-    mnist = MNIST(train_start=TRAIN_START, train_end=TRAIN_END, test_start=TEST_START, test_end=TEST_END)
+    mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
     x_set, y_set = mnist.get_set(set_type)
 
     generate_attacks("attack/mnist/" + attack_type + "_" + set_type, "models/joblibs/lenet-5.joblib",

@@ -7,10 +7,6 @@ from cleverhans.dataset import CIFAR10
 from attack.generate_attacks import generate_attacks
 
 FILE_NAME = "models/joblibs/cifar10.joblib"
-TRAIN_START = 0
-TRAIN_END = 50000
-TEST_START = 0
-TEST_END = 10000
 
 
 def cifar10_save_attacks(weighted, set_type, first_index, last_index):
@@ -27,7 +23,7 @@ def cifar10_save_attacks(weighted, set_type, first_index, last_index):
     else:
         attack_type = "simple"
 
-    cifar10 = CIFAR10(train_start=TRAIN_START, train_end=TRAIN_END, test_start=TEST_START, test_end=TEST_END)
+    cifar10 = CIFAR10(train_start=0, train_end=50000, test_start=0, test_end=10000)
     x_set, y_set = cifar10.get_set(set_type)
 
     y_set = y_set.reshape((y_set.shape[0], 10))

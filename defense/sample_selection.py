@@ -3,7 +3,6 @@ import random
 import numpy
 import os
 
-
 SAMPLE_COUNT = 2000
 
 
