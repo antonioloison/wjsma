@@ -40,7 +40,7 @@ def generate_attacks(save_path, filepath, x_set, y_set, weighted, first_index, l
     assert len(model.get_params()) > 0
 
     jsma = SaliencyMapMethod(model, sess=sess)
-    jsma_params = {'theta': .2, 'gamma': 0.3,
+    jsma_params = {'theta': 1, 'gamma': 0.3,
                    'clip_min': 0., 'clip_max': 1.,
                    'y_target': None, 'weighted': weighted}
 
