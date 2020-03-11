@@ -14,18 +14,23 @@ from cleverhans.utils import other_classes
 from cleverhans.utils_tf import model_argmax
 from cleverhans.serial import load
 
+import os
 
-def generate_attacks(save_path, filepath, x_set, y_set, weighted, first_index, last_index):
+
+def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, last_index):
     """
     Run evaluation on a saved model
     :param save_path: path where attacks will be saved
-    :param filepath: path to model to evaluate
+    :param file_path: path to model to evaluate
     :param x_set: the input tensors
     :param y_set: the output tensors
     :param weighted: boolean representing which version of JSMA you want to test
     :param first_index: the first sample index
     :param last_index: the last sample index
     """
+
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
 
     sess = tf.Session()
 
@@ -35,7 +40,7 @@ def generate_attacks(save_path, filepath, x_set, y_set, weighted, first_index, l
     x = tf.placeholder(tf.float32, shape=(None, img_rows, img_cols, channels))
 
     with sess.as_default():
-        model = load(filepath)
+        model = load(file_path)
 
     assert len(model.get_params()) > 0
 

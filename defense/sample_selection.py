@@ -54,6 +54,9 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
     x = numpy.array([x_set[k][0] for k in range(len(x_set))])
     y = numpy.array([x_set[k][1] for k in range(len(x_set))])
 
+    if not os.path.exists("defense/augmented/"):
+        os.mkdir("defense/augmented/")
+
     if weighted:
         numpy.save("defense/augmented/x_weighted.npy", x)
         numpy.save("defense/augmented/y_weighted.npy", y)
