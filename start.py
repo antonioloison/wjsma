@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     if args.job == "train":
         if args.dataset == "mnist":
-            from models.mnist_clean import model_train
+            from models.mnist import model_train
 
             model_train()
         elif args.dataset == "cifar10":
@@ -50,7 +50,7 @@ if __name__ == "__main__":
             raise ValueError("Invalid dataset")
     elif args.job == "test":
         if args.dataset == "mnist":
-            from models.mnist_clean import model_test
+            from models.mnist import model_test
 
             model_test()
         elif args.dataset == "cifar10":
