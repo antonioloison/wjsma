@@ -1,5 +1,5 @@
 """
-The SalienceMapMethod attack with a weighted parameter and returning the adversarial eample and
+The SalienceMapMethod attack with a weighted parameter and returning the adversarial sample and
 the prediction probabilities for each iteration.
 Method inspired from the SalienceMapMethod of the cleverhans module
 """
@@ -201,12 +201,12 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
 
         target_tmp = grads_target
         target_tmp -= increase_coef * reduce_max(tf.abs(grads_target), axis=1, keepdims=True)
-        target_sum = tf.reshape(target_tmp, shape=[-1, nb_features, 1]) +\
+        target_sum = tf.reshape(target_tmp, shape=[-1, nb_features, 1]) + \
                      tf.reshape(target_tmp, shape=[-1, 1, nb_features])
 
         other_tmp = grads_other
         other_tmp += increase_coef * reduce_max(tf.abs(grads_other), axis=1, keepdims=True)
-        other_sum = tf.reshape(other_tmp, shape=[-1, nb_features, 1]) +\
+        other_sum = tf.reshape(other_tmp, shape=[-1, nb_features, 1]) + \
                     tf.reshape(other_tmp, shape=[-1, 1, nb_features])
 
         if increase:

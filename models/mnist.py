@@ -9,7 +9,7 @@ from models.cleverhans_utils import MaxPooling2D
 from models.model_utls import model_training, model_testing
 
 
-FILE_NAME = "le-net5.joblib"
+FILE_NAME = "lenet-5.joblib"
 
 
 def model_train(file_name=FILE_NAME):

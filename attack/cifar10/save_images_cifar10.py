@@ -20,7 +20,6 @@ def cifar10_save_attacks(weighted, set_type, first_index, last_index):
     :param set_type: either "train" or "test"
     :param first_index: the first sample index
     :param last_index: the last sample index
-    :return:
     """
 
     if weighted:
