@@ -1,3 +1,6 @@
+"""
+Useful function to test and train models adapted from the cleverhans library
+"""
 from cleverhans.train import train
 from cleverhans.utils_tf import model_eval
 from cleverhans.loss import CrossEntropy

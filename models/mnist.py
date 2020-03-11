@@ -1,5 +1,5 @@
 """
-LeNet5 architecture from MNIST
+LeNet5 architecture for MNIST
 """
 
 from cleverhans.dataset import MNIST

@@ -1,5 +1,5 @@
 """
-
+Train and test AllConvolutional model for CIFAR-10, based on cleverhans AllConvolutional Model
 """
 
 from cleverhans.dataset import CIFAR10
@@ -8,13 +8,12 @@ from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAverage
 from models.cleverhans_utils import MaxPooling2D
 from models.model_utls import model_training, model_testing
 
-
 FILE_NAME = "cifar10.joblib"
 
 
 def model_train(file_name=FILE_NAME):
     """
-    Creates the joblib of LeNet-5 over the MNIST dataset
+    Creates the joblib of the AllConvolutional model for CIFAR-10
     :param file_name: the name of the joblib file
     """
 
