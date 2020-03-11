@@ -2,99 +2,86 @@
 Analysis of the results and comparison between weighted and simple JSMA
 """
 
-import os
 import pandas as pd
-
-pd.set_option('precision', 3)
 import numpy as np
-import time
 import matplotlib.pyplot as plt
 
-IMAGE_SIZE = 784
+pd.set_option('precision', 3)
 
-simple_path_train = r"D:\nn_robustness\le_net_5_final\targeted\train\mnist_simple_train"
-MAX_MAX_ITER = 117
-MAXIMUM_DISTORTION = 14.5
-weighted_path_train = r"D:\nn_robustness\le_net_5_final\targeted\train\mnist_weighted_train"
-
-def probabilities_visualization(origin_class, target_class, folder_path, maximum_distortion=30, well_predicted=True):
-    counter = 0
-    new_counter = 0
-    bad_preds = 0
-    probs_size = 80 * 10
-    total_probs = np.zeros((0, 0))
-    for root, dirs, files in os.walk(folder_path):
-        for file in files:
-            if new_counter > 0:
-                break
-            if counter % 1000 == 0:
-                print(counter)
-            df = pd.read_csv(folder_path + '\\' + file)
-            first_class = np.argmax(df.iloc[IMAGE_SIZE:(IMAGE_SIZE + 10), 0].values)
-            origin = int(df.columns[0][-6])
-            if well_predicted:
-                good_prediction = (int(df.columns[0][-6]) == first_class)
-            else:
-                good_prediction = True
-            if good_prediction and origin == origin_class:
-                index = -1
-                for i in range(10):
-                    if i < first_class:
-                        index = i
-                    elif i > first_class:
-                        index = i - 1
-                    if index != -1:
-                        target = int(df.columns[index][-1])
-                        if target_class == target:
-                            if new_counter == 0:
-                                total_probs = df.iloc[IMAGE_SIZE:(IMAGE_SIZE + probs_size), index].values.reshape(
-                                    ((probs_size, 1)))
-                            else:
-                                probabilities = df.iloc[IMAGE_SIZE:(IMAGE_SIZE + probs_size), index].values.reshape(
-                                    ((probs_size, 1)))
-                                total_probs = np.concatenate((total_probs, probabilities), axis=1)
-                            print(file)
-                            new_counter += 1
-                    index = -1
-            else:
-                bad_preds += 1
-            counter += 1
-        print(total_probs.shape)
-        mean_probs = np.mean(total_probs, axis=1)
-        print(mean_probs.shape)
-    return counter, bad_preds, mean_probs
-
-TARGET = 6
-simple_probs = probabilities_visualization(0, TARGET, simple_path_train)[2]
-weighted_probs = probabilities_visualization(0, TARGET, weighted_path_train)[2]
-
-def get_arrays(mean_values, target_class, maximum_distortion=30):
-    probs_size = 80
-    target_probs = []
-    other_probs = []
-    for i in range(probs_size):
-        sum = 0
-        for j in range(10):
-            index = 10 * i + j
-            if j == target_class:
-                target_probs.append(mean_values[index])
-            else:
-                sum += mean_values[index]
-        other_probs.append(sum)
-    return target_probs, other_probs
+FOLDER_PATH = r"D:\nn_robustness\mnist_final\targeted\train"
+IMAGE_NUMBER = 1
 
 
-simple_t_probs, simple_o_probs = get_arrays(simple_probs, 0, maximum_distortion=30)
-weighted_t_probs, weighted_o_probs = get_arrays(weighted_probs, 0, maximum_distortion=30)
+def prob_length(probabilities):
+    """
+    Computes index of the length of the probability vector without completing zeros
+    :param probabilities: array with listof probabilities with zeros
+    :return: length of probabilities until the end of the attack,
+    """
+    zero_matrix = np.zeros((10,))
+    max_length = probabilities.shape[0]
+    for i in range(0, max_length, 10):
+        if np.array_equal(probabilities[i:(i + 10), 0], zero_matrix):
+            return i
+    return max_length
 
-def vizualize(simple_t_probs, simple_o_probs, weighted_t_probs, weighted_o_probs):
-    plt.plot(simple_t_probs[:simple_t_probs.index(0)], label="simple target")
-    print([(i,simple_t_probs[:simple_t_probs.index(0)][i]) for i in range(simple_t_probs.index(0))])
-    # plt.plot(simple_o_probs[:simple_o_probs.index(0)], label="simple others")
-    plt.plot(weighted_t_probs[:weighted_t_probs.index(0)], label="weighted target")
-    print([(i,weighted_t_probs[:weighted_t_probs.index(0)][i]) for i in range(weighted_t_probs.index(0))])
 
-    # plt.plot(weighted_o_probs[:weighted_o_probs.index(0)], label="weighted others")
+def probabilities_array(file_path, target_class):
+    """
+    Gets the interesting probabilities that will be displayed in graph
+    :param file_path: attack file path
+    :param target_class: target of the adversarial sample
+    :return: array to plot
+    """
+    if 'mnist' in file_path:
+        image_size = 784
+    elif 'cifar10' in file_path:
+        image_size = 3072
+    else:
+        raise ValueError("file_path doesn't contain the dataset name, either 'mnist or 'cifar10")
+    csv = pd.read_csv(file_path)
+    max_length = csv.shape[0] - 3 - image_size
+    first_class = np.argmax(csv.iloc[image_size:(image_size + 10), 0].values)
+    if target_class < first_class:
+        index = target_class
+    elif target_class > first_class:
+        index = target_class - 1
+    else:
+        raise ValueError("The target has the same value as the predicted class.")
+    probabilities = csv.iloc[image_size:(image_size + max_length), index].values.reshape((max_length, 1))
+    prob_len = prob_length(probabilities)
+    return probabilities[:prob_len, 0]
+
+
+def visualise(folder_path, origin_class, target_class):
+    """
+    Shows the graph of the target and origin class probabilities in the jsma and wjsma attacks
+    :param folder_path:
+    :param origin_class:
+    :param target_class:
+    :return:
+    """
+    if "mnist" in folder_path and "ciar10" not in folder_path:
+        set_type = "mnist"
+    elif "cifar10" in folder_path and "mnist" not in folder_path:
+        set_type = "cifar10"
+    else:
+        raise ValueError("You have to mention the dataset name in the folder path either mnist of cifar10")
+
+    simple_path = folder_path + "\\" + set_type + r"_simple_train\simple_image_" + str(IMAGE_NUMBER) + ".csv"
+    weighted_path = folder_path + "\\" + set_type + r"_weighted_train\weighted_image_" + str(IMAGE_NUMBER) + ".csv"
+    simple_probs = probabilities_array(simple_path, 6)
+    weighted_probs = probabilities_array(weighted_path, 6)
+
+    simple_target_probs = simple_probs[target_class::10]
+    weighted_target_probs = weighted_probs[target_class::10]
+    simple_origin_probs = simple_probs[origin_class::10]
+    weighted_origin_probs = weighted_probs[origin_class::10]
+
+    plt.plot(simple_target_probs, label="JSMA target")
+    plt.plot(simple_origin_probs, label="JSMA others")
+    plt.plot(weighted_target_probs, label="WJSMA target")
+    plt.plot(weighted_origin_probs, label="WJSMA others")
 
     plt.xlabel('Iterations')
     plt.ylabel('Probabilities')
@@ -102,4 +89,5 @@ def vizualize(simple_t_probs, simple_o_probs, weighted_t_probs, weighted_o_probs
     plt.legend()
     plt.show()
 
-vizualize(simple_t_probs, simple_o_probs, weighted_t_probs, weighted_o_probs)
+
+visualise(FOLDER_PATH, 0, 6)
