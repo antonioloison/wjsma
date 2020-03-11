@@ -1,5 +1,7 @@
 """
-The SalienceMapMethod attack using a weighted parameter
+The SalienceMapMethod attack with a weighted parameter and returning the adversarial eample and
+the prediction probabilities for each iteration.
+Method inspired from the SalienceMapMethod of the cleverhans module
 """
 
 import warnings
