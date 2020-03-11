@@ -15,9 +15,7 @@ augment (settype, weighted)
 stats (dataset, settype, weighted)
 """
 
-
 import argparse
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -27,6 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('--weighted', type=str, default="false")
     parser.add_argument('--firstindex', type=int, default=0)
     parser.add_argument('--lastindex', type=int, default=10000)
+    parser.add_argument('--visual', type=str, default='square')
     args = parser.parse_args()
 
     if args.job == "train":
@@ -157,5 +156,17 @@ if __name__ == "__main__":
                     average_stat("defense/mnist_defense_weighted/weighted_train/")
         else:
             raise ValueError("Invalid dataset")
+    elif args.job == "visualisation":
+        if args.visual == "probabilities":
+            from visualisation.show_image import visualise
+
+            visualise()
+        elif args.visual not in ["single", "line", "square"]:
+            raise ValueError("Invalid visualisation mode")
+        else:
+            from visualisation.show_image import main
+
+            main(args.visual)
+
     else:
         raise ValueError("Invalid job")

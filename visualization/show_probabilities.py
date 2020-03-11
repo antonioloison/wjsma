@@ -10,6 +10,8 @@ pd.set_option('precision', 3)
 
 FOLDER_PATH = r"D:\nn_robustness\mnist_final\targeted\train"
 IMAGE_NUMBER = 1
+TARGET_CLASS = 6
+ORIGIN_CLASS = 0
 
 
 def prob_length(probabilities):
@@ -53,7 +55,7 @@ def probabilities_array(file_path, target_class):
     return probabilities[:prob_len, 0]
 
 
-def visualise(folder_path, origin_class, target_class):
+def visualise(folder_path=FOLDER_PATH, origin_class=ORIGIN_CLASS, target_class=TARGET_CLASS):
     """
     Shows the graph of the target and origin class probabilities in the jsma and wjsma attacks
     :param folder_path:
@@ -88,6 +90,3 @@ def visualise(folder_path, origin_class, target_class):
 
     plt.legend()
     plt.show()
-
-
-visualise(FOLDER_PATH, 0, 6)
