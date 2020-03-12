@@ -23,7 +23,7 @@ LEARNING_RATE = 0.001
 def model_train(weighted):
     """
     Creates the joblib of LeNet-5 over the MNIST dataset
-    :param weighted: switches between the simple and weighted defense
+    :param weighted: switches between the JSMA and WJSMA defense
     """
 
     layers = [
@@ -47,27 +47,27 @@ def model_train(weighted):
     x_test, y_test = mnist.get_set('test')
 
     if weighted:
-        x_add = np.load("defense/augmented/x_weighted.npy")[:AUGMENT_SIZE]
-        y_add = np.load("defense/augmented/y_weighted.npy")[:AUGMENT_SIZE]
+        x_add = np.load("defense/augmented/x_wjsma.npy")[:AUGMENT_SIZE]
+        y_add = np.load("defense/augmented/y_wjsma.npy")[:AUGMENT_SIZE]
     else:
-        x_add = np.load("defense/augmented/x_simple.npy")[:AUGMENT_SIZE]
-        y_add = np.load("defense/augmented/y_simple.npy")[:AUGMENT_SIZE]
+        x_add = np.load("defense/augmented/x_jsma.npy")[:AUGMENT_SIZE]
+        y_add = np.load("defense/augmented/y_jsma.npy")[:AUGMENT_SIZE]
 
     x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0).astype(np.float32)
     y_train = np.concatenate((y_train, y_add), axis=0).astype(np.float32)
 
     if weighted:
-        model_training(model, "mnist_defense_weighted.joblib", x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS,
+        model_training(model, "mnist_defense_wjsma.joblib", x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS,
                        batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE)
     else:
-        model_training(model, "mnist_defense_simple.joblib", x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS,
+        model_training(model, "mnist_defense_jsma.joblib", x_train, y_train, x_test, y_test, nb_epochs=NB_EPOCHS,
                        batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE)
 
 
 def model_test(weighted):
     """
     Runs the evaluation and prints out the results
-    :param weighted: switches between the simple and weighted defense
+    :param weighted: switches between the JSMA and WJSMA defense
     """
 
     mnist = MNIST(train_start=TRAIN_START, train_end=TRAIN_END, test_start=TEST_START, test_end=TEST_END)
@@ -77,16 +77,16 @@ def model_test(weighted):
     print("ORIGINAL MNIST TEST")
 
     if weighted:
-        model_testing("mnist_defense_weighted.joblib", x_train, y_train, x_test, y_test)
+        model_testing("mnist_defense_wjsma.joblib", x_train, y_train, x_test, y_test)
     else:
-        model_testing("mnist_defense_simple.joblib", x_train, y_train, x_test, y_test)
+        model_testing("mnist_defense_jsma.joblib", x_train, y_train, x_test, y_test)
 
     if weighted:
-        x_add = np.load("defense/augmented/x_weighted.npy")[:AUGMENT_SIZE]
-        y_add = np.load("defense/augmented/y_weighted.npy")[:AUGMENT_SIZE]
+        x_add = np.load("defense/augmented/x_wjsma.npy")[:AUGMENT_SIZE]
+        y_add = np.load("defense/augmented/y_wjsma.npy")[:AUGMENT_SIZE]
     else:
-        x_add = np.load("defense/augmented/x_simple.npy")[:AUGMENT_SIZE]
-        y_add = np.load("defense/augmented/y_simple.npy")[:AUGMENT_SIZE]
+        x_add = np.load("defense/augmented/x_jsma.npy")[:AUGMENT_SIZE]
+        y_add = np.load("defense/augmented/y_jsma.npy")[:AUGMENT_SIZE]
 
     x_train = np.concatenate((x_train, x_add.reshape(x_add.shape + (1,))), axis=0).astype(np.float32)
     y_train = np.concatenate((y_train, y_add), axis=0).astype(np.float32)
@@ -95,6 +95,6 @@ def model_test(weighted):
     print("AUGMENTED MNIST TEST")
 
     if weighted:
-        model_testing("mnist_defense_weighted.joblib", x_train, y_train, x_test, y_test)
+        model_testing("mnist_defense_wjsma.joblib", x_train, y_train, x_test, y_test)
     else:
-        model_testing("mnist_defense_simple.joblib", x_train, y_train, x_test, y_test)
+        model_testing("mnist_defense_jsma.joblib", x_train, y_train, x_test, y_test)

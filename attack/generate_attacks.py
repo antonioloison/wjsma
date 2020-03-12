@@ -87,8 +87,8 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
             np.concatenate((sample.reshape(-1), np.zeros((shape2 - shape1,))))
 
         if weighted:
-            attack_type = 'weighted'
+            attack_type = 'wjsma'
         else:
-            attack_type = 'simple'
+            attack_type = 'jsma'
 
         results.to_csv(save_path + '/' + attack_type + '_image_' + str(sample_ind) + '.csv', index=False)

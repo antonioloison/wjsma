@@ -19,7 +19,7 @@ def image_square():
     f, axarr = plt.subplots(10, 10)
     f.set_size_inches(16, 6)
     for i, index in enumerate(INDEXES.values()):
-        file = r"../attack/cifar10/simple_train/simple_image_" + str(index) + ".csv"
+        file = r"../attack/cifar10/jsma_train/jsma_image_" + str(index) + ".csv"
         csv = pd.read_csv(file)
         for j in range(10):
             if i == j:
@@ -80,9 +80,9 @@ def single_image(folder_path, index, target_class):
         image_size = 3072
         image_shape = (32, 32, 3)
         image_color = None
-    file_simple = folder_path + "\\" + "simple_train/simple_image_" + str(index) + ".csv"
-    file_weighted = folder_path + "\\" + "weighted_train/weighted_image_" + str(index) + ".csv"
-    csv = pd.read_csv(file_simple)
+    file_jsma = folder_path + "\\" + "jsma_train/jsma_image_" + str(index) + ".csv"
+    file_weighted = folder_path + "\\" + "wjsma_train/wjsma_image_" + str(index) + ".csv"
+    csv = pd.read_csv(file_jsma)
     origin_class = int(csv.columns[0][-6])
     if origin_class == target_class:
         raise ValueError("Same target class as the class predicted by the neural network!")
@@ -99,6 +99,7 @@ def single_image(folder_path, index, target_class):
         axarr[i].imshow(img, image_color)
         axarr[i].axis('off')
     plt.show()
+
 
 def main(image_type):
     if image_type == "single":

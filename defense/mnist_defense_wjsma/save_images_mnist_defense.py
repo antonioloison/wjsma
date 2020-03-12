@@ -18,13 +18,13 @@ def mnist_defense_save_attacks(weighted, set_type, first_index, last_index):
     """
 
     if weighted:
-        attack_type = "weighted"
+        attack_type = "wjsma"
     else:
-        attack_type = "simple"
+        attack_type = "jsma"
 
     mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)
     x_set, y_set = mnist.get_set(set_type)
 
-    generate_attacks("defense/mnist_defense_weighted/" + attack_type + "_" + set_type,
-                     "models/joblibs/mnist_defense_weighted.joblib",
+    generate_attacks("defense/mnist_defense_wjsma/" + attack_type + "_" + set_type,
+                     "models/joblibs/mnist_defense_wjsma.joblib",
                      x_set, y_set, weighted, first_index, last_index)

@@ -1,7 +1,7 @@
 """
 Arguments
 -- job [train, test, attack, augment]
--- dataset [mnist, cifar10, mnist-defense-simple, mnist-defense-weighted]
+-- dataset [mnist, cifar10, mnist-defense-jsma, mnist-defense-wjsma]
 -- settype [test, train]
 -- weighted [false, true]
 -- firstindex int
@@ -16,6 +16,7 @@ stats (dataset, settype, weighted)
 """
 
 import argparse
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -37,11 +38,11 @@ if __name__ == "__main__":
             from models.cifar10 import model_train
 
             model_train()
-        elif args.dataset == "mnist-defense-simple":
+        elif args.dataset == "mnist-defense-jsma":
             from defense.train_defense import model_train
 
             model_train(False)
-        elif args.dataset == "mnist-defense-weighted":
+        elif args.dataset == "mnist-defense-wjsma":
             from defense.train_defense import model_train
 
             model_train(True)
@@ -56,11 +57,11 @@ if __name__ == "__main__":
             from models.cifar10 import model_test
 
             model_test()
-        elif args.dataset == "mnist-defense-simple":
+        elif args.dataset == "mnist-defense-jsma":
             from defense.train_defense import model_test
 
             model_test(False)
-        elif args.dataset == "mnist-defense-weighted":
+        elif args.dataset == "mnist-defense-wjsma":
             from defense.train_defense import model_test
 
             model_test(True)
@@ -71,7 +72,7 @@ if __name__ == "__main__":
             raise ValueError("Invalid set type")
 
         if args.weighted != "true" and args.weighted != "false":
-            raise ValueError("Weighted argument is invalid")
+            raise ValueError("wjsma argument is invalid")
 
         if args.dataset == "mnist":
             from attack.mnist.save_images_mnist import mnist_save_attacks
@@ -81,12 +82,12 @@ if __name__ == "__main__":
             from attack.cifar10.save_images_cifar10 import cifar10_save_attacks
 
             cifar10_save_attacks(args.weighted == "true", args.settype, args.firstindex, args.lastindex)
-        elif args.dataset == "mnist-defense-simple":
-            from defense.mnist_defense_simple.save_images_mnist_defense import mnist_defense_save_attacks
+        elif args.dataset == "mnist-defense-jsma":
+            from defense.mnist_defense_jsma.save_images_mnist_defense import mnist_defense_save_attacks
 
             mnist_defense_save_attacks(args.weighted == "true", args.settype, args.firstindex, args.lastindex)
-        elif args.dataset == "mnist-defense-weighted":
-            from defense.mnist_defense_weighted.save_images_mnist_defense import mnist_defense_save_attacks
+        elif args.dataset == "mnist-defense-wjsma":
+            from defense.mnist_defense_wjsma.save_images_mnist_defense import mnist_defense_save_attacks
 
             mnist_defense_save_attacks(args.weighted == "true", args.settype, args.firstindex, args.lastindex)
         else:
@@ -96,7 +97,7 @@ if __name__ == "__main__":
             raise ValueError("Invalid set type")
 
         if args.weighted != "true" and args.weighted != "false":
-            raise ValueError("Weighted argument is invalid")
+            raise ValueError("wjsma argument is invalid")
 
         from defense.sample_selection import generate_extra_set
 
@@ -106,54 +107,54 @@ if __name__ == "__main__":
             raise ValueError("Invalid set type")
 
         if args.weighted != "true" and args.weighted != "false":
-            raise ValueError("Weighted argument is invalid")
+            raise ValueError("wjsma argument is invalid")
 
         from stats.stats import average_stat
 
         if args.dataset == "mnist":
             if args.settype == "test":
                 if args.weighted == "false":
-                    average_stat("attack/mnist/simple_test/")
+                    average_stat("attack/mnist/jsma_test/")
                 else:
-                    average_stat("attack/mnist/weighted_test/")
+                    average_stat("attack/mnist/wjsma_test/")
             else:
                 if args.weighted == "false":
-                    average_stat("attack/mnist/simple_train/")
+                    average_stat("attack/mnist/jsma_train/")
                 else:
-                    average_stat("attack/mnist/weighted_train/")
+                    average_stat("attack/mnist/wjsma_train/")
         elif args.dataset == "cifar10":
             if args.settype == "test":
                 if args.weighted == "false":
-                    average_stat("attack/cifar10/simple_test/")
+                    average_stat("attack/cifar10/jsma_test/")
                 else:
-                    average_stat("attack/cifar10/weighted_test/")
+                    average_stat("attack/cifar10/wjsma_test/")
             else:
                 if args.weighted == "false":
-                    average_stat("attack/cifar10/simple_train/")
+                    average_stat("attack/cifar10/jsma_train/")
                 else:
-                    average_stat("attack/cifar10/weighted_train/")
-        elif args.dataset == "mnist-defense-simple":
+                    average_stat("attack/cifar10/wjsma_train/")
+        elif args.dataset == "mnist-defense-jsma":
             if args.settype == "test":
                 if args.weighted == "false":
-                    average_stat("defense/mnist_defense_simple/simple_test/")
+                    average_stat("defense/mnist_defense_jsma/jsma_test/")
                 else:
-                    average_stat("defense/mnist_defense_simple/weighted_test/")
+                    average_stat("defense/mnist_defense_jsma/wjsma_test/")
             else:
                 if args.weighted == "false":
-                    average_stat("defense/mnist_defense_simple/simple_train/")
+                    average_stat("defense/mnist_defense_jsma/jsma_train/")
                 else:
-                    average_stat("defense/mnist_defense_simple/weighted_train/")
-        elif args.dataset == "mnist-defense-weighted":
+                    average_stat("defense/mnist_defense_jsma/wjsma_train/")
+        elif args.dataset == "mnist-defense-wjsma":
             if args.settype == "test":
                 if args.weighted == "false":
-                    average_stat("defense/mnist_defense_weighted/simple_test/")
+                    average_stat("defense/mnist_defense_wjsma/jsma_test/")
                 else:
-                    average_stat("defense/mnist_defense_weighted/weighted_test/")
+                    average_stat("defense/mnist_defense_wjsma/wjsma_test/")
             else:
                 if args.weighted == "false":
-                    average_stat("defense/mnist_defense_weighted/simple_train/")
+                    average_stat("defense/mnist_defense_wjsma/jsma_train/")
                 else:
-                    average_stat("defense/mnist_defense_weighted/weighted_train/")
+                    average_stat("defense/mnist_defense_wjsma/wjsma_train/")
         else:
             raise ValueError("Invalid dataset")
     elif args.job == "visualisation":

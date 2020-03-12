@@ -1,5 +1,5 @@
 """
-Analysis of the results and comparison between weighted and simple JSMA
+Analysis of the results and comparison between JSMA and WJSMA
 """
 
 import pandas as pd
@@ -70,20 +70,20 @@ def visualise(folder_path=FOLDER_PATH, origin_class=ORIGIN_CLASS, target_class=T
     else:
         raise ValueError("You have to mention the dataset name in the folder path either mnist of cifar10")
 
-    simple_path = folder_path + "\\" + set_type + r"_simple_train\simple_image_" + str(IMAGE_NUMBER) + ".csv"
-    weighted_path = folder_path + "\\" + set_type + r"_weighted_train\weighted_image_" + str(IMAGE_NUMBER) + ".csv"
-    simple_probs = probabilities_array(simple_path, 6)
-    weighted_probs = probabilities_array(weighted_path, 6)
+    jsma_path = folder_path + "\\" + set_type + r"_jsma_train\jsma_image_" + str(IMAGE_NUMBER) + ".csv"
+    wjsma_path = folder_path + "\\" + set_type + r"_wjsma_train\wjsma_image_" + str(IMAGE_NUMBER) + ".csv"
+    jsma_probs = probabilities_array(jsma_path, 6)
+    wjsma_probs = probabilities_array(wjsma_path, 6)
 
-    simple_target_probs = simple_probs[target_class::10]
-    weighted_target_probs = weighted_probs[target_class::10]
-    simple_origin_probs = simple_probs[origin_class::10]
-    weighted_origin_probs = weighted_probs[origin_class::10]
+    jsma_target_probs = jsma_probs[target_class::10]
+    wjsma_target_probs = wjsma_probs[target_class::10]
+    jsma_origin_probs = jsma_probs[origin_class::10]
+    wjsma_origin_probs = wjsma_probs[origin_class::10]
 
-    plt.plot(simple_target_probs, label="JSMA target")
-    plt.plot(simple_origin_probs, label="JSMA others")
-    plt.plot(weighted_target_probs, label="WJSMA target")
-    plt.plot(weighted_origin_probs, label="WJSMA others")
+    plt.plot(jsma_target_probs, label="JSMA target")
+    plt.plot(jsma_origin_probs, label="JSMA others")
+    plt.plot(wjsma_target_probs, label="WJSMA target")
+    plt.plot(wjsma_origin_probs, label="WJSMA others")
 
     plt.xlabel('Iterations')
     plt.ylabel('Probabilities')

@@ -20,9 +20,9 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
     samples = [[] for _ in range(10)]
 
     if weighted:
-        path = "attack/mnist/weighted_" + set_type + "/"
+        path = "attack/mnist/wjsma_" + set_type + "/"
     else:
-        path = "attack/mnist/simple_" + set_type + "/"
+        path = "attack/mnist/jsma_" + set_type + "/"
 
     for file in os.listdir(path):
         df = pandas.read_csv(path + file)
@@ -58,11 +58,11 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
         os.mkdir("defense/augmented/")
 
     if weighted:
-        numpy.save("defense/augmented/x_weighted.npy", x)
-        numpy.save("defense/augmented/y_weighted.npy", y)
+        numpy.save("defense/augmented/x_wjsma.npy", x)
+        numpy.save("defense/augmented/y_wjsma.npy", y)
     else:
-        numpy.save("defense/augmented/x_simple.npy", x)
-        numpy.save("defense/augmented/y_simple.npy", y)
+        numpy.save("defense/augmented/x_jsma.npy", x)
+        numpy.save("defense/augmented/y_jsma.npy", y)
 
 
 def one_hot(index):
