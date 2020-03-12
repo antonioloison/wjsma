@@ -12,14 +12,14 @@ INDEXES = {"airplane": 30, "automobile": 4, "bird": 57, "cat": 91, "deer": 28, "
            "ship": 8, "truck": 14}
 
 
-def image_square():
+def image_square(folder_path):
     """
     Visualise a square of images and attacks for the cifar10 dataset
     """
     f, axarr = plt.subplots(10, 10)
     f.set_size_inches(16, 6)
     for i, index in enumerate(INDEXES.values()):
-        file = r"../attack/cifar10/jsma_train/jsma_image_" + str(index) + ".csv"
+        file = folder_path + "jsma_train/jsma_image_" + str(index) + ".csv"
         csv = pd.read_csv(file)
         for j in range(10):
             if i == j:
@@ -29,9 +29,6 @@ def image_square():
             axarr[i, j].imshow(img)
             axarr[i, j].axis('off')
     plt.show()
-
-
-# image_square()
 
 def one_line(file_path):
     """
@@ -80,8 +77,8 @@ def single_image(folder_path, index, target_class):
         image_size = 3072
         image_shape = (32, 32, 3)
         image_color = None
-    file_jsma = folder_path + "\\" + "jsma_train/jsma_image_" + str(index) + ".csv"
-    file_weighted = folder_path + "\\" + "wjsma_train/wjsma_image_" + str(index) + ".csv"
+    file_jsma = folder_path + "/jsma_train/jsma_image_" + str(index) + ".csv"
+    file_weighted = folder_path + "/wjsma_train/wjsma_image_" + str(index) + ".csv"
     csv = pd.read_csv(file_jsma)
     origin_class = int(csv.columns[0][-6])
     if origin_class == target_class:
@@ -99,14 +96,3 @@ def single_image(folder_path, index, target_class):
         axarr[i].imshow(img, image_color)
         axarr[i].axis('off')
     plt.show()
-
-
-def main(image_type):
-    if image_type == "single":
-        simgle_image(r"../attack/cifar10", 1, 8)
-    elif image_type == "line":
-        one_line(file_path)
-    elif image_type == "square":
-        image_square()
-    else:
-        raise ValueError("Wrong image type")

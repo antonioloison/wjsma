@@ -1,6 +1,6 @@
 echo "Testing probabilities visualisation"
 python start.py --job visualisation --visual probabilities
-echo "Testing image visualisation"
+echo "Testing single image visualisation"
 python start.py --job visualisation --visual single
 echo "Testing line visualisation"
 python start.py --job visualisation --visual line
