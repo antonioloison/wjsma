@@ -4,13 +4,14 @@
 
 For reproduction, you can use the script `start.py` to run every tasks used in the paper
 
-`python start.py --job <job> --dataset <dataset> --settype <settype> --weighted <weighted> --firstindex <firstindex> --lastindex <lastindex>`
-- `job` either `"train"`, `"test"`, `"attack"`, `"augment"` or `"stats"`, selects the action that the script will run (see below for examples)
+`python start.py --job <job> --dataset <dataset> --settype <settype> --weighted <weighted> --firstindex <firstindex> --lastindex <lastindex> --visual <visual>`
+- `job` either `"train"`, `"test"`, `"attack"`, `"augment"`, `"stats"` or `"visualisation"`, selects the action that the script will run (see below for examples)
 - `dataset` either `"mnist"`, `"cifar10"`, `"mnist-defense-simple"` or `"mnist-defense-weighted"`, selects the dataset / model on which the job will be performed (note that `mnist-defense-simple` and `mnist-defense-weighted` are the MNIST datasets augmented by JSMA and WJSMA respectively)
 - `settype` either `"train"` or `"test"`, switches between the train and the test of the dataset
 - `weighted` either `"true"` or `"false"`, switches between Papernot's JSMA and WJSMA
 - `firstindex` an integer (only used for the attack, specifies the index of the first attacked image in the dataset)
 - `lastindex` an integer (only used for the attack, specifies the index of the last attacked image in the dataset)
+- `visual` either `"probabilities"`, `"single"`, `"line"`, `"square"`, switches between the type of image visualisation
 
 ### Job examples
 
@@ -49,3 +50,8 @@ To generate WJSMA adversarial samples against the newly trained LeNet5 model ove
 To print out the performances of our model previously attacked
 
 `python start.py --job stats --datatset mnist-defense-weighted --settype test --weighted true`
+
+### CSV File Structure of the Adversarial Samples
+
+Each csv file has ten columns. The first nine columns contain the adversarial samples for each target different from the origin class, while the last column contains the original image.
+In each adversarial sample column, the first (784 for MNIST images and 3072 for CIFAR-10 images) lines contain the pixel values of the adversarial samples, the last three lines contain the number of changed pixels, the distortion coefficient and if the attack was successful. The in-between lines contain the probability vectors and are completed with zeros if the attack end between the maximum number of iterations.
