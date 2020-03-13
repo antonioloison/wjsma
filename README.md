@@ -1,5 +1,10 @@
 # An Efficient Probabilistic Jacobian-based Saliency Map Attack in Machine Learning (WJSMA)
 
+## Installation
+
+Please install the packages required by the `requirements.txt` file.
+In case you encounter some errors after this installation, you can refer to section `Model Training and Testing Precautions` to fix them.
+
 ## How to use
 
 For reproduction, you can use the script `start.py` to run every task used in the paper
@@ -75,7 +80,7 @@ When loading a model for attacks or testing, you may encounter the following err
 To solve the `AttributeError`, you can copy the MaxPooling2D layer in the `cleverhans_utils.py` file of the `models` folder. Then, paste it in `picklable_model.py` of the cleverhans library code under the `GlobalAveragePool(Layer)`.
 Then delete the import `from models.cleverhans_utils import MaxPooling2D` and add `MaxPooling2D` to the this import `from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool`
 
-To solve the `ModuleNotFoundError`, add the following lines to the top of the file that is executed by `start.py`:
+To solve the `ModuleNotFoundError`, add the following lines to the top of the file `start.py`:
 
 ```
 # Replace YOUR_MODEL_PATH by the path of the models folder of the form /Users/user/.../wjsma/models
