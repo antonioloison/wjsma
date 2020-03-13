@@ -1,11 +1,12 @@
 """
 Arguments
--- job [train, test, attack, augment]
+-- job [train, test, attack, augment, stats, visualisation]
 -- dataset [mnist, cifar10, mnist-defense-jsma, mnist-defense-wjsma]
 -- settype [test, train]
 -- weighted [false, true]
 -- firstindex int
 -- lastindex int
+-- visual [probabilities, single, line, square]
 
 Available jobs (see README.md for extra information)
 train (dataset)
@@ -13,20 +14,20 @@ test (dataset)
 attack (dataset, settype, weighted, firstindex, lastindex)
 augment (settype, weighted)
 stats (dataset, settype, weighted)
+visualisation (visual)
 """
 
 import argparse
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--job', type=str, default="train")
+    parser.add_argument('--job', type=str, default="attack")
     parser.add_argument('--dataset', type=str, default="mnist")
     parser.add_argument('--settype', type=str, default="test")
-    parser.add_argument('--weighted', type=str, default="false")
+    parser.add_argument('--weighted', type=str, default="true")
     parser.add_argument('--firstindex', type=int, default=0)
-    parser.add_argument('--lastindex', type=int, default=10000)
-    parser.add_argument('--visual', type=str, default='square')
+    parser.add_argument('--lastindex', type=int, default=1)
+    parser.add_argument('--visual', type=str, default='single')
     args = parser.parse_args()
 
     if args.job == "train":
