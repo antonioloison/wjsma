@@ -3,6 +3,7 @@ Computation of the statistics of the generated attacks in folder
 """
 
 import pandas
+import numpy as np
 import os
 
 
@@ -33,9 +34,9 @@ def average_stat(folder, with_max_threshold=True):
 
     for file in os.listdir(folder):
         df = pandas.read_csv(folder + file)
-        np = df.to_numpy()
+        df_values = df.to_numpy()
 
-        first_class = np.argmax(df.iloc[image_size:(image_size + 10), 0].values)
+        first_class = np.argmax(df_values[image_size:(image_size + 10), 0])
         good_prediction = (int(df.columns[0][-6]) == first_class)
 
         if not good_prediction:
@@ -45,17 +46,17 @@ def average_stat(folder, with_max_threshold=True):
             total_samples += 1
 
             if with_max_threshold:
-                average_pixel_number += min(np[-3, i], max_pixel_number)
-                average_distortion += min(np[-2, i], max_distortion)
+                average_pixel_number += min(df_values[-3, i], max_pixel_number)
+                average_distortion += min(df_values[-2, i], max_distortion)
             else:
-                average_pixel_number += np[-3, i]
-                average_distortion += np[-2, i]
+                average_pixel_number += df_values[-3, i]
+                average_distortion += df_values[-2, i]
 
-            if np[-2, i] < max_distortion:
+            if df_values[-2, i] < max_distortion:
                 total_samples_successful += 1
 
-                average_pixel_number_successful += np[-3, i]
-                average_distortion_successful += np[-2, i]
+                average_pixel_number_successful += df_values[-3, i]
+                average_distortion_successful += df_values[-2, i]
 
     print(folder)
     print("----------------------")

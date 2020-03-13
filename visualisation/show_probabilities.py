@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 pd.set_option('precision', 3)
 
-FOLDER_PATH = r"D:\nn_robustness\mnist_final\targeted\train"
+FOLDER_PATH = r"../attack/mnist/"
 IMAGE_NUMBER = 1
 TARGET_CLASS = 6
 ORIGIN_CLASS = 0
@@ -70,8 +70,8 @@ def visualise(folder_path=FOLDER_PATH, origin_class=ORIGIN_CLASS, target_class=T
     else:
         raise ValueError("You have to mention the dataset name in the folder path either mnist of cifar10")
 
-    jsma_path = folder_path + "\\" + set_type + r"_jsma_train\jsma_image_" + str(IMAGE_NUMBER) + ".csv"
-    wjsma_path = folder_path + "\\" + set_type + r"_wjsma_train\wjsma_image_" + str(IMAGE_NUMBER) + ".csv"
+    jsma_path = folder_path + "jsma_train/jsma_image_" + str(IMAGE_NUMBER) + ".csv"
+    wjsma_path = folder_path + "wjsma_train/wjsma_image_" + str(IMAGE_NUMBER) + ".csv"
     jsma_probs = probabilities_array(jsma_path, 6)
     wjsma_probs = probabilities_array(wjsma_path, 6)
 
@@ -81,9 +81,9 @@ def visualise(folder_path=FOLDER_PATH, origin_class=ORIGIN_CLASS, target_class=T
     wjsma_origin_probs = wjsma_probs[origin_class::10]
 
     plt.plot(jsma_target_probs, label="JSMA target")
-    plt.plot(jsma_origin_probs, label="JSMA others")
+    plt.plot(jsma_origin_probs, label="JSMA origin")
     plt.plot(wjsma_target_probs, label="WJSMA target")
-    plt.plot(wjsma_origin_probs, label="WJSMA others")
+    plt.plot(wjsma_origin_probs, label="WJSMA origin")
 
     plt.xlabel('Iterations')
     plt.ylabel('Probabilities')

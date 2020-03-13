@@ -159,14 +159,23 @@ if __name__ == "__main__":
             raise ValueError("Invalid dataset")
     elif args.job == "visualisation":
         if args.visual == "probabilities":
-            from visualisation.show_image import visualise
+            from visualisation.show_probabilities import visualise
 
-            visualise()
+            visualise(r"attack/mnist/")
         elif args.visual not in ["single", "line", "square"]:
             raise ValueError("Invalid visualisation mode")
         else:
-            from visualisation.show_image import main
+            if args.visual == "single":
+                from visualisation.show_image import single_image
 
-            main(args.visual)
+                single_image(r"attack/cifar10", 5, 8)
+            elif args.visual == "line":
+                from visualisation.show_image import one_line
+
+                one_line(r"attack/mnist/wjsma_test/wjsma_image_5.csv")
+            elif args.visual == "square":
+                from visualisation.show_image import image_square
+
+                image_square(r"attack/cifar10/")
     else:
         raise ValueError("Invalid job")
