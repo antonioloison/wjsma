@@ -49,7 +49,7 @@ To generate WJSMA adversarial samples against the newly trained LeNet5 model ove
 
 To print out the performances of our model previously attacked
 
-`python start.py --job stats --datatset mnist-defense-weighted --settype test --weighted true`
+`python start.py --job stats --dataset mnist-defense-weighted --settype test --weighted true`
 
 ### CSV File Structure of the Adversarial Samples
 
