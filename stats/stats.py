@@ -11,7 +11,9 @@ def average_stat(folder, with_max_threshold=True):
     """
     Prints out the stats of the attack
     :param folder: the csv folder
+    :param with_max_threshold: uses the max threshold as the upper limit to compute stats for unsuccessful samples.
     """
+
     if "mnist" in folder:
         image_size = 784
         max_distortion = 0.145
