@@ -51,6 +51,12 @@ To print out the performances of the different attacks
 
 `python start.py --job stats --dataset mnist-defense-weighted --settype test --weighted true`
 
+#### Visualise images
+
+To show and compare adversarial samples
+
+`python start.py --job visualisation --visual single`
+
 ### CSV File Structure of the Adversarial Samples
 
 Each csv file has ten columns. The first nine columns contain the adversarial samples for each target different from the origin class, while the last column contains the original image.
@@ -69,11 +75,10 @@ When loading a model for attacks or testing, you may encounter the following err
 To solve the `AttributeError`, you can copy the MaxPooling2D layer in the `cleverhans_utils.py` file of the `models` folder. Then, paste it in `picklable_model.py` of the cleverhans library code under the `GlobalAveragePool(Layer)`.
 Then delete the import `from models.cleverhans_utils import MaxPooling2D` and add `MaxPooling2D` to the this import `from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool`
 
-To solve the `ModuleNotFoundError`, add the following lines to the top of the `cifar10.py` file of the `models` folder:
+To solve the `ModuleNotFoundError`, add the following lines to the top of the file that is executed by `start.py`:
 
 ```
-# Replace YOUR_MODEL_PATH by the path of the models folder
+# Replace YOUR_MODEL_PATH by the path of the models folder of the form /Users/user/.../wjsma/models
 import sys
-print(sys.path)
 sys.path.append(YOUR_MODEL_PATH)
 ```
