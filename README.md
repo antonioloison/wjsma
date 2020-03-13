@@ -2,7 +2,7 @@
 
 ## How to use
 
-For reproduction, you can use the script `start.py` to run every tasks used in the paper
+For reproduction, you can use the script `start.py` to run every task used in the paper
 
 `python start.py --job <job> --dataset <dataset> --settype <settype> --weighted <weighted> --firstindex <firstindex> --lastindex <lastindex> --visual <visual>`
 - `job` either `"train"`, `"test"`, `"attack"`, `"augment"`, `"stats"` or `"visualisation"`, selects the action that the script will run (see below for examples)
@@ -47,7 +47,7 @@ To generate WJSMA adversarial samples against the newly trained LeNet5 model ove
 
 #### Analyze attack and model performances
 
-To print out the performances of our model previously attacked
+To print out the performances of the different attacks
 
 `python start.py --job stats --dataset mnist-defense-weighted --settype test --weighted true`
 
