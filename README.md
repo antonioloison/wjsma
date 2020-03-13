@@ -55,3 +55,25 @@ To print out the performances of our model previously attacked
 
 Each csv file has ten columns. The first nine columns contain the adversarial samples for each target different from the origin class, while the last column contains the original image.
 In each adversarial sample column, the first (784 for MNIST images and 3072 for CIFAR-10 images) lines contain the pixel values of the adversarial samples, the last three lines contain the number of changed pixels, the distortion coefficient and if the attack was successful. The in-between lines contain the probability vectors and are completed with zeros if the attack end between the maximum number of iterations.
+
+### Model Training and Testing Precautions
+
+The joblib files in the `joblib` file are the models that we used for our simulations. If you try to train a new neural networks, these models will be overwritten. To avoid that, you on ly need to rename our original models.
+
+#### Loading errors handling
+
+When loading a model for attacks or testing, you may encounter the following errors: 
+- `AttributeError: module 'cleverhans.picklable_model' has no attribute 'MaxPooling2D'`
+- `ModuleNotFoundError: No module named 'cleverhans_utils'` 
+
+To solve the `AttributeError`, you can copy the MaxPooling2D layer in the `cleverhans_utils.py` file of the `models` folder. Then, paste it in `picklable_model.py` of the cleverhans library code under the `GlobalAveragePool(Layer)`.
+Then delete the import `from models.cleverhans_utils import MaxPooling2D` and add `MaxPooling2D` to the this import `from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool`
+
+To solve the `ModuleNotFoundError`, add the following lines to the top of the `cifar10.py` file of the `models` folder:
+
+```
+# Replace YOUR_MODEL_PATH by the path of the models folder
+import sys
+print(sys.path)
+sys.path.append(YOUR_MODEL_PATH)
+```
