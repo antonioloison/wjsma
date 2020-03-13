@@ -45,7 +45,7 @@ To generate WJSMA adversarial samples against the newly trained LeNet5 model ove
 
 `python start.py --job attack --dataset mnist-defense-weighted --settype test --weighted true --firstindex 0 -- lastindex 10000`
 
-#### Analyze attack and model performances
+#### Analyse attack and model performances
 
 To print out the performances of the different attacks
 
