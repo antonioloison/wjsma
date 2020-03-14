@@ -34,8 +34,6 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
             if np[1955, i] < 0.145:
                 samples[label].append(np[:784, i].reshape((28, 28)))
 
-        print([len(samples[k]) for k in range(10)])
-
     x_set = []
 
     for k in range(10):
