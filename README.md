@@ -69,7 +69,7 @@ In each adversarial sample column, the first (784 for MNIST images and 3072 for 
 
 ### Model Training and Testing Precautions
 
-The joblib files in the `joblib` file are the models that we used for our simulations. If you try to train a new neural networks, these models will be overwritten. To avoid that, you on ly need to rename our original models.
+The joblib files in the `joblib` file are the models that we used for our simulations. If you try to train a new neural networks, these models will be overwritten. To avoid that, you only need to rename our original models.
 
 #### Loading errors handling
 
@@ -78,7 +78,7 @@ When loading a model for attacks or testing, you may encounter the following err
 - `ModuleNotFoundError: No module named 'cleverhans_utils'` 
 
 To solve the `AttributeError`, you can copy the MaxPooling2D layer in the `cleverhans_utils.py` file of the `models` folder. Then, paste it in `picklable_model.py` of the cleverhans library code under the `GlobalAveragePool(Layer)`.
-Then delete the import `from models.cleverhans_utils import MaxPooling2D` and add `MaxPooling2D` to the this import `from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool`
+Then delete the import `from models.cleverhans_utils import MaxPooling2D` and add `MaxPooling2D` to this import `from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool`
 
 To solve the `ModuleNotFoundError`, add the following lines to the top of the file `start.py`:
 
