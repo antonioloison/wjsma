@@ -38,7 +38,7 @@ class SaliencyMapMethod(Attack):
 
         self.feedable_kwargs = ('y_target',)
         self.structural_kwargs = [
-            'theta', 'gamma', 'clip_max', 'clip_min', 'symbolic_impl', 'weighted'
+            'theta', 'gamma', 'clip_max', 'clip_min', 'symbolic_impl', 'weighted', 'power'
         ]
 
     def generate(self, x, **kwargs):
