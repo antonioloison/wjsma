@@ -78,7 +78,8 @@ class SaliencyMapMethod(Attack):
                 gamma=self.gamma,
                 clip_min=self.clip_min,
                 clip_max=self.clip_max,
-                weighted=self.weighted
+                weighted=self.weighted,
+                power=self.power
             )
 
         else:
@@ -92,7 +93,7 @@ class SaliencyMapMethod(Attack):
         return x_adv
 
     def parse_params(self, theta=1., gamma=1., clip_min=0., clip_max=1., y_target=None, symbolic_impl=True,
-                     weighted=False, **kwargs):
+                     weighted=False, power=1, **kwargs):
         """
         Take in a dictionary of parameters and applies attack-specific checks
         before saving them as attributes.
@@ -104,6 +105,7 @@ class SaliencyMapMethod(Attack):
         :param y_target: (optional) Target tensor if the attack is targeted
         :param symbolic_impl: (optional) uses the symbolic version of JSMA (muste be True)
         :param weighted: (optional) switches between JSMA and WJSMA
+        :param power: (optional) the power applied to the probabilities when using WJSMA
         """
 
         self.theta = theta
@@ -113,6 +115,7 @@ class SaliencyMapMethod(Attack):
         self.y_target = y_target
         self.symbolic_impl = symbolic_impl
         self.weighted = weighted
+        self.power = power
 
         if len(kwargs.keys()) > 0:
             warnings.warn("kwargs is unused and will be removed on or after "
@@ -128,7 +131,7 @@ def jsma_batch(*args, **kwargs):
     )
 
 
-def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted):
+def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted, power):
     """
     TensorFlow implementation of the JSMA (see https://arxiv.org/abs/1511.07528
     for details about the algorithm design choices).
@@ -193,7 +196,8 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
         grads_target = reduce_sum(grads * target_class, axis=0)
 
         if weighted:
-            grads_other = reduce_sum(grads * other_classes * tf.reshape(preds, shape=[nb_classes, -1, 1]), axis=0)
+            grads_other = reduce_sum(grads * other_classes *
+                                     tf.reshape(preds, shape=[nb_classes, -1, 1]), axis=0) ** power
         else:
             grads_other = reduce_sum(grads * other_classes, axis=0)
 

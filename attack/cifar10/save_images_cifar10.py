@@ -29,4 +29,4 @@ def cifar10_save_attacks(weighted, set_type, first_index, last_index):
     y_set = y_set.reshape((y_set.shape[0], 10))
 
     generate_attacks("attack/cifar10/" + attack_type + "_" + set_type, "models/joblibs/cifar10.joblib",
-                     x_set, y_set, weighted, first_index, last_index)
+                     x_set, y_set, weighted, 1, first_index, last_index)
