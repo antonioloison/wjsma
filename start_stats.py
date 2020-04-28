@@ -7,4 +7,4 @@ for power in powers:
     average_stat("attack/mnist_power/wjsma_test_" + str(power) + "/")
 
 print("JSMA")
-average_stat("attack/mnist/jsma_test_1/")
+average_stat("attack/mnist_power/jsma_test_1/")
