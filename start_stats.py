@@ -1,5 +1,7 @@
 from stats.stats import average_stat
 
+from visualisation.show_image import one_line
+
 powers = [0, 1/10, 1/3, 1/2, 1, 2, 3, 10]
 
 for power in powers:

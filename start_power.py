@@ -9,3 +9,5 @@ for power in powers:
     mnist_power_save_attacks(True, power, "test", 0, 1000)
 
 mnist_power_save_attacks(False, 1, "test", 0, 1000)
+
+

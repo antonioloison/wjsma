@@ -196,8 +196,10 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
         grads_target = reduce_sum(grads * target_class, axis=0)
 
         if weighted:
-            grads_other = reduce_sum(grads * other_classes *
-                                     tf.reshape(preds, shape=[nb_classes, -1, 1]), axis=0) ** power
+            pond = tf.reshape(preds, shape=[nb_classes, -1, 1])
+            p_t = tf.ones(tf.shape(pond)) * power
+
+            grads_other = reduce_sum(grads * other_classes * tf.pow(pond, p_t), axis=0)
         else:
             grads_other = reduce_sum(grads * other_classes, axis=0)
 
