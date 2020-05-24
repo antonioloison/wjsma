@@ -73,7 +73,7 @@ if __name__ == "__main__":
             raise ValueError("Invalid set type")
 
         if args.weighted != "true" and args.weighted != "false":
-            raise ValueError("wjsma argument is invalid")
+            raise ValueError("wjsma weighted argument is invalid")
 
         if args.dataset == "mnist":
             from attack.mnist.save_images_mnist import mnist_save_attacks
@@ -98,7 +98,7 @@ if __name__ == "__main__":
             raise ValueError("Invalid set type")
 
         if args.weighted != "true" and args.weighted != "false":
-            raise ValueError("wjsma argument is invalid")
+            raise ValueError("wjsma weighted argument is invalid")
 
         from defense.sample_selection import generate_extra_set
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
             raise ValueError("Invalid set type")
 
         if args.weighted != "true" and args.weighted != "false":
-            raise ValueError("wjsma argument is invalid")
+            raise ValueError("wjsma weighted argument is invalid")
 
         from stats.stats import average_stat
 

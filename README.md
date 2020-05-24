@@ -62,6 +62,8 @@ To show and compare adversarial samples
 
 `python start.py --job visualisation --visual single`
 
+Please generate or download the adversarial samples before trying to visualise them.
+
 ### CSV File Structure of the Adversarial Samples
 
 Each csv file has ten columns. The first nine columns contain the adversarial samples for each target different from the origin class, while the last column contains the original image.

@@ -155,3 +155,5 @@ defense/mnist_defense_wjsma/simple_test
 defense/mnist_defense_wjsma/simple_train
 defense/mnist_defense_wjsma/weighted_test
 defense/mnist_defense_wjsma/weighted_train
+
+new_attack/
