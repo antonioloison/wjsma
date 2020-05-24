@@ -9,20 +9,22 @@ import os
 SAMPLE_COUNT = 2000
 
 
-def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
+def generate_extra_set(set_type, attack_type, sample_per_class=SAMPLE_COUNT):
     """
     Generates the extra dataset
     :param set_type: either train or test
-    :param weighted: switches between JSMA and WJSMA samples
+    :param attack_type: switches between JSMA, WJSMA and LogAttack samples
     :param sample_per_class: the number of adversarial samples per class
     """
 
     samples = [[] for _ in range(10)]
 
-    if weighted:
+    if attack_type == "wjsma":
         path = "attack/mnist/wjsma_" + set_type + "/"
-    else:
+    elif attack_type == "jsma":
         path = "attack/mnist/jsma_" + set_type + "/"
+    else:
+        path = "attack/mnist/logattack_" + set_type + "/"
 
     for file in os.listdir(path):
         df = pandas.read_csv(path + file)
@@ -55,13 +57,15 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
     if not os.path.exists("defense/augmented/"):
         os.mkdir("defense/augmented/")
 
-    if weighted:
+    if attack_type == "wjsma":
         numpy.save("defense/augmented/x_wjsma.npy", x)
         numpy.save("defense/augmented/y_wjsma.npy", y)
-    else:
+    elif attack_type == "jsma":
         numpy.save("defense/augmented/x_jsma.npy", x)
         numpy.save("defense/augmented/y_jsma.npy", y)
-
+    else:
+        numpy.save("defense/augmented/x_logattack.npy", x)
+        numpy.save("defense/augmented/y_logattack.npy", y)
 
 def one_hot(index):
     """

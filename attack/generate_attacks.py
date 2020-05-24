@@ -17,14 +17,14 @@ from cleverhans.serial import load
 import os
 
 
-def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, last_index):
+def generate_attacks(save_path, file_path, x_set, y_set, attack_type, first_index, last_index):
     """
     Run evaluation on a saved model
     :param save_path: path where attacks will be saved
     :param file_path: path to model to evaluate
     :param x_set: the input tensors
     :param y_set: the output tensors
-    :param weighted: boolean representing which version of JSMA you want to test
+    :param attack_type: string representing which version of the attack you want to test
     :param first_index: the first sample index
     :param last_index: the last sample index
     """
@@ -44,10 +44,26 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
 
     assert len(model.get_params()) > 0
 
-    jsma = SaliencyMapMethod(model, sess=sess)
-    jsma_params = {'theta': 1, 'gamma': 0.3,
-                   'clip_min': 0., 'clip_max': 1.,
-                   'y_target': None, 'weighted': weighted}
+    if attack_type == "logattack":
+        attack = LogMapMethod(model, sess=sess)
+        attack_params = {'theta': 1, 'gamma': 0.3,
+                       'clip_min': 0., 'clip_max': 1.,
+                       'y_target': None}
+
+    elif attack_type == "wjsma":
+        attack = SaliencyMapMethod(model, sess=sess)
+        attack_params = {'theta': 1, 'gamma': 0.3,
+                       'clip_min': 0., 'clip_max': 1.,
+                       'y_target': None, weighted: True}
+
+    elif attack_type == "jsma":
+        attack = SaliencyMapMethod(model, sess=sess)
+        attack_params = {'theta': 1, 'gamma': 0.3,
+                       'clip_min': 0., 'clip_max': 1.,
+                       'y_target': None, weighted: False}
+
+    else:
+        raise ValueError(f"Incorrect attack type: {attack_type}")
 
     preds = model(x)
 
@@ -63,8 +79,8 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
         for target in target_classes:
             one_hot_target = np.zeros((1, nb_classes), dtype=np.float32)
             one_hot_target[0, target] = 1
-            jsma_params['y_target'] = one_hot_target
-            adv_x, predictions = jsma.generate_np(sample, **jsma_params)
+            attack_params['y_target'] = one_hot_target
+            adv_x, predictions = attack.generate_np(sample, **attack_params)
 
             res = int(model_argmax(sess, x, preds, adv_x) == target)
 
@@ -85,10 +101,5 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
 
         results['original_image_' + str(sample_ind)] = \
             np.concatenate((sample.reshape(-1), np.zeros((shape2 - shape1,))))
-
-        if weighted:
-            attack_type = 'wjsma'
-        else:
-            attack_type = 'jsma'
 
         results.to_csv(save_path + '/' + attack_type + '_image_' + str(sample_ind) + '.csv', index=False)

@@ -9,11 +9,11 @@ In case you encounter some errors after this installation, you can refer to sect
 
 For reproduction, you can use the script `start.py` to run every task used in the paper
 
-`python start.py --job <job> --dataset <dataset> --settype <settype> --weighted <weighted> --firstindex <firstindex> --lastindex <lastindex> --visual <visual>`
+`python start.py --job <job> --dataset <dataset> --settype <settype> --attacktype <attacktype> --firstindex <firstindex> --lastindex <lastindex> --visual <visual>`
 - `job` either `"train"`, `"test"`, `"attack"`, `"augment"`, `"stats"` or `"visualisation"`, selects the action that the script will run (see below for examples)
-- `dataset` either `"mnist"`, `"cifar10"`, `"mnist-defense-simple"` or `"mnist-defense-weighted"`, selects the dataset / model on which the job will be performed (note that `mnist-defense-simple` and `mnist-defense-weighted` are the MNIST datasets augmented by JSMA and WJSMA respectively)
+- `dataset` either `"mnist"`, `"cifar10"`, `"mnist-defense-jsma"`, `"mnist-defense-wjsma"` or `"mnist-defense-logattack"`, selects the dataset / model on which the job will be performed (note that `mnist-defense-simple`, `mnist-defense-weighted` and `mnist-defense-logattack` are the MNIST datasets augmented by JSMA, WJSMA and LogAttack respectively)
 - `settype` either `"train"` or `"test"`, switches between the train and the test of the dataset
-- `weighted` either `"true"` or `"false"`, switches between Papernot's JSMA and WJSMA
+- `attacktype` either `"jsma"`, `"wjsma"` or `"logattack"`, switches between Papernot's JSMA and WJSMA
 - `firstindex` an integer (only used for the attack, specifies the index of the first attacked image in the dataset)
 - `lastindex` an integer (only used for the attack, specifies the index of the last attacked image in the dataset)
 - `visual` either `"probabilities"`, `"single"`, `"line"`, `"square"`, switches between the type of image visualisation
@@ -34,13 +34,13 @@ To test an existing LeNet5 model trained over the original MNIST dataset
 
 To generate WJSMA adversarial samples against the previously trained LeNet5 model over the train set of the MNIST dataset
 
-`python start.py --job attack --dataset mnist --settype train --weighted true --firstindex 0 --lastindex 10000`
+`python start.py --job attack --dataset mnist --settype train --attacktype wjsma --firstindex 0 --lastindex 10000`
 
 #### Defenses
 
 To generate the augmented MNIST dataset using the previously crafted adversarial samples (note that you can only augment the original MNIST dataset)
 
-`python start.py --job augment --settype train --weighted true`
+`python start.py --job augment --settype train --attack_type wjsma`
 
 To train a new LeNet5 model and train it on the augmented MNIST dataset
 
@@ -48,13 +48,13 @@ To train a new LeNet5 model and train it on the augmented MNIST dataset
 
 To generate WJSMA adversarial samples against the newly trained LeNet5 model over the test set of the MNIST dataset
 
-`python start.py --job attack --dataset mnist-defense-weighted --settype test --weighted true --firstindex 0 -- lastindex 10000`
+`python start.py --job attack --dataset mnist-defense-weighted --settype test --attacktype wjsma --firstindex 0 -- lastindex 10000`
 
 #### Analyse attack and model performances
 
 To print out the performances of the different attacks
 
-`python start.py --job stats --dataset mnist-defense-weighted --settype test --weighted true`
+`python start.py --job stats --dataset mnist-defense-weighted --settype test --attacktype wjsma`
 
 #### Visualise images
 
