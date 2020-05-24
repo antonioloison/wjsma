@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 
 from attack.saliency_map_attack import SaliencyMapMethod
+from attack.log_map_method import LogMapMethod
 
 from cleverhans.utils import other_classes
 from cleverhans.utils_tf import model_argmax

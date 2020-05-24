@@ -11,7 +11,7 @@ from six.moves import xrange
 import tensorflow as tf
 
 from cleverhans.attacks import Attack
-from cleverhans.compat import reduce_sum, reduce_max, reduce_any, reduce_mean
+from cleverhans.compat import reduce_sum, reduce_max, reduce_any
 
 tf_dtype = tf.as_dtype('float32')
 
@@ -192,7 +192,7 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max):
         grads_other = reduce_sum(grads * other_classes * preds, axis=0)
         log_grads = first_prod - grads_other
 
-        scores -= increase_coef * reduce_max(tf.abs(log_grads), axis=1, keepdims=True)
+        scores = log_grads - increase_coef * reduce_max(tf.abs(log_grads), axis=1, keepdims=True)
         reshaped_scores = tf.reshape(scores, shape=[-1, nb_features, 1])
         best = tf.argmax(tf.reshape(reshaped_scores, shape=[1, nb_features]), axis=1)
 

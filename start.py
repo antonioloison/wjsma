@@ -123,7 +123,7 @@ if __name__ == "__main__":
             else:
                 if args.attacktype == "jsma":
                     average_stat("attack/mnist/jsma_train/")
-                elif args.attacktype == "wjsma:
+                elif args.attacktype == "wjsma":
                     average_stat("attack/mnist/wjsma_train/")
                 else:
                     average_stat("attack/mnist/logattack_train/")
