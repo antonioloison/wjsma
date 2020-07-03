@@ -9,7 +9,7 @@ import os
 SAMPLE_COUNT = 2000
 
 
-def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
+def generate_extra_set(set_type, attack, sample_per_class=SAMPLE_COUNT):
     """
     Generates the extra dataset
     :param set_type: either train or test
@@ -19,10 +19,7 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
 
     samples = [[] for _ in range(10)]
 
-    if weighted:
-        path = "attack/mnist/wjsma_" + set_type + "/"
-    else:
-        path = "attack/mnist/jsma_" + set_type + "/"
+    path = "attack/mnist/attack_" + set_type + "/"
 
     for file in os.listdir(path):
         df = pandas.read_csv(path + file)
@@ -45,7 +42,7 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
         samples[k] = samples[k][:sample_per_class]
 
         for sample in samples[k]:
-            x_set.append([sample, one_hot(k)])
+            x_set.append([sample, _one_hot(k)])
 
     random.shuffle(x_set)
 
@@ -55,21 +52,11 @@ def generate_extra_set(set_type, weighted, sample_per_class=SAMPLE_COUNT):
     if not os.path.exists("defense/augmented/"):
         os.mkdir("defense/augmented/")
 
-    if weighted:
-        numpy.save("defense/augmented/x_wjsma.npy", x)
-        numpy.save("defense/augmented/y_wjsma.npy", y)
-    else:
-        numpy.save("defense/augmented/x_jsma.npy", x)
-        numpy.save("defense/augmented/y_jsma.npy", y)
+    numpy.save("defense/augmented/" + attack + "_x.npy", x)
+    numpy.save("defense/augmented/" + attack + "_y.npy", y)
 
 
-def one_hot(index):
-    """
-    Returns the one hot vector of the specified index
-    :param index: the 1 position
-    :return: the on hot vector
-    """
-
+def _one_hot(index):
     vector = numpy.zeros(10)
     vector[index] = 1
 

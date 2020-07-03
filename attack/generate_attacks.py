@@ -17,7 +17,7 @@ from cleverhans.serial import load
 import os
 
 
-def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, last_index):
+def generate_attacks(save_path, file_path, x_set, y_set, attack, first_index, last_index):
     """
     Run evaluation on a saved model
     :param save_path: path where attacks will be saved
@@ -26,7 +26,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
     :param y_set: the output tensors
     :param weighted: boolean representing which version of JSMA you want to test
     :param first_index: the first sample index
-    :param last_index: the last sample index
+    :param last_index: the last sample indexd
     """
 
     if not os.path.exists(save_path):
@@ -47,7 +47,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
     jsma = SaliencyMapMethod(model, sess=sess)
     jsma_params = {'theta': 1, 'gamma': 0.3,
                    'clip_min': 0., 'clip_max': 1.,
-                   'y_target': None, 'weighted': weighted}
+                   'y_target': None, 'attack': attack}
 
     preds = model(x)
 
@@ -86,9 +86,4 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
         results['original_image_' + str(sample_ind)] = \
             np.concatenate((sample.reshape(-1), np.zeros((shape2 - shape1,))))
 
-        if weighted:
-            attack_type = 'wjsma'
-        else:
-            attack_type = 'jsma'
-
-        results.to_csv(save_path + '/' + attack_type + '_image_' + str(sample_ind) + '.csv', index=False)
+        results.to_csv(save_path + '/' + attack + '_image_' + str(sample_ind) + '.csv', index=False)

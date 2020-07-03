@@ -38,7 +38,7 @@ class SaliencyMapMethod(Attack):
 
         self.feedable_kwargs = ('y_target',)
         self.structural_kwargs = [
-            'theta', 'gamma', 'clip_max', 'clip_min', 'symbolic_impl', 'weighted'
+            'theta', 'gamma', 'clip_max', 'clip_min', 'symbolic_impl', 'attack'
         ]
 
     def generate(self, x, **kwargs):
@@ -78,7 +78,7 @@ class SaliencyMapMethod(Attack):
                 gamma=self.gamma,
                 clip_min=self.clip_min,
                 clip_max=self.clip_max,
-                weighted=self.weighted
+                attack=self.attack
             )
 
         else:
@@ -92,7 +92,7 @@ class SaliencyMapMethod(Attack):
         return x_adv
 
     def parse_params(self, theta=1., gamma=1., clip_min=0., clip_max=1., y_target=None, symbolic_impl=True,
-                     weighted=False, **kwargs):
+                     attack="jsma", **kwargs):
         """
         Take in a dictionary of parameters and applies attack-specific checks
         before saving them as attributes.
@@ -103,7 +103,7 @@ class SaliencyMapMethod(Attack):
         :param clip_max: (optional float) Maximum component value for clipping
         :param y_target: (optional) Target tensor if the attack is targeted
         :param symbolic_impl: (optional) uses the symbolic version of JSMA (muste be True)
-        :param weighted: (optional) switches between JSMA and WJSMA
+        :param attack: (optional) switches between JSMA, WJSMA and TSMA
         """
 
         self.theta = theta
@@ -112,7 +112,7 @@ class SaliencyMapMethod(Attack):
         self.clip_max = clip_max
         self.y_target = y_target
         self.symbolic_impl = symbolic_impl
-        self.weighted = weighted
+        self.attack = attack
 
         if len(kwargs.keys()) > 0:
             warnings.warn("kwargs is unused and will be removed on or after "
@@ -128,7 +128,7 @@ def jsma_batch(*args, **kwargs):
     )
 
 
-def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted):
+def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
     """
     TensorFlow implementation of the JSMA (see https://arxiv.org/abs/1511.07528
     for details about the algorithm design choices).
@@ -139,7 +139,7 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
     :param gamma: a float between 0 - 1 indicating the maximum distortion percentage
     :param clip_min: minimum value for components of the example returned
     :param clip_max: maximum value for components of the example returned
-    :param weighted: switches between JSMA and WJSMA
+    :param attack: switches between JSMA, WJSMA and TSMA
     :return: a tensor for the adversarial example
     """
 
@@ -185,14 +185,25 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, weighted
             derivatives = tf.gradients(logits[:, class_ind], x_in)
             list_derivatives.append(derivatives[0])
 
-        grads = tf.reshape(tf.stack(list_derivatives), shape=[nb_classes, -1, nb_features])
+        if attack == "tsma":
+            grads0 = tf.reshape(tf.stack(list_derivatives), shape=[nb_classes, -1, nb_features])
 
-        target_class = tf.reshape(tf.transpose(y_in, perm=[1, 0]), shape=[nb_classes, -1, 1])
-        other_classes = tf.cast(tf.not_equal(target_class, 1), tf_dtype)
+            grads = tf.reshape(1 - x_in, shape=[1, nb_features]) * grads0
 
-        grads_target = reduce_sum(grads * target_class, axis=0)
+            target_class = tf.reshape(tf.transpose(y_in, perm=[1, 0]), shape=[nb_classes, -1, 1])
+            other_classes = tf.cast(tf.not_equal(target_class, 1), tf_dtype)
 
-        if weighted:
+            grads_target = reduce_sum(grads * target_class, axis=0)
+
+        else:
+            grads = tf.reshape(tf.stack(list_derivatives), shape=[nb_classes, -1, nb_features])
+
+            target_class = tf.reshape(tf.transpose(y_in, perm=[1, 0]), shape=[nb_classes, -1, 1])
+            other_classes = tf.cast(tf.not_equal(target_class, 1), tf_dtype)
+
+            grads_target = reduce_sum(grads * target_class, axis=0)
+
+        if attack == "tsma" or attack == "wjsma":
             grads_other = reduce_sum(grads * other_classes * tf.reshape(preds, shape=[nb_classes, -1, 1]), axis=0)
         else:
             grads_other = reduce_sum(grads * other_classes, axis=0)
