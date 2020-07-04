@@ -30,7 +30,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, attack, first_index, la
     """
 
     if not os.path.exists(save_path):
-        os.mkdir(save_path)
+        os.makedirs(save_path)
 
     sess = tf.Session()
 
