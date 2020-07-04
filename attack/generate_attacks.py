@@ -30,7 +30,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, attack, first_index, la
     """
 
     if not os.path.exists(save_path):
-        os.makedirs(save_path)
+        os.mkdir(save_path)
 
     sess = tf.Session()
 
@@ -45,7 +45,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, attack, first_index, la
     assert len(model.get_params()) > 0
 
     jsma = SaliencyMapMethod(model, sess=sess)
-    jsma_params = {'theta': 1, 'gamma': 0.3,
+    jsma_params = {'theta': 1, 'gamma': 0.155,
                    'clip_min': 0., 'clip_max': 1.,
                    'y_target': None, 'attack': attack}
 
@@ -74,9 +74,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, attack, first_index, la
             percent_perturb = float(nb_changed) / adv_x.reshape(-1).shape[0]
 
             results['number_' + str(sample_ind) + '_' + str(current_class) + '_to_' + str(target)] = \
-                np.concatenate((adv_x_reshape.reshape(-1),
-                                predictions.reshape(-1),
-                                np.array([nb_changed, percent_perturb, res]))
+                np.concatenate((adv_x_reshape.reshape(-1), np.array([nb_changed, percent_perturb, res]))
                                )
 
         sample_vector = sample.reshape(-1)
