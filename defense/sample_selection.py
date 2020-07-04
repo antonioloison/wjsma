@@ -19,7 +19,7 @@ def generate_extra_set(set_type, attack, sample_per_class=SAMPLE_COUNT):
 
     samples = [[] for _ in range(10)]
 
-    path = "attack/mnist/attack_" + set_type + "/"
+    path = "attack/mnist/" + attack + "_" + set_type + "/"
 
     for file in os.listdir(path):
         df = pandas.read_csv(path + file)
@@ -28,7 +28,7 @@ def generate_extra_set(set_type, attack, sample_per_class=SAMPLE_COUNT):
         label = int(df.columns[0][-6])
 
         for i in range(9):
-            if np[1955, i] < 0.145:
+            if np[785, i] < 0.145:
                 samples[label].append(np[:784, i].reshape((28, 28)))
 
     x_set = []
