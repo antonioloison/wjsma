@@ -63,7 +63,7 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
 
     folder = "attack/" + model + "/" + attack + "_" + set_type + "/"
 
-    for file in os.listdir(folder)[:10]:
+    for file in os.listdir(folder):
         df = pandas.read_csv(folder + file)
         df_values = df.to_numpy()
 
