@@ -6,16 +6,20 @@ from cleverhans.dataset import MNIST
 from cleverhans.picklable_model import Conv2D, ReLU, Flatten, Linear, Softmax, MLP
 
 from models.cleverhans_utils import MaxPooling2D
-from models.model_utls import model_training, model_testing
+from models.model_utils import model_training, model_testing
 
 
-FILE_NAME = "lenet-5.joblib"
+FILE_NAME = "mnist.joblib"
 
 
 def model_train(file_name=FILE_NAME):
     """
-    Creates the joblib of LeNet-5 over the MNIST dataset
-    :param file_name: the name of the joblib file
+    Creates the joblib file of LeNet-5 trained over the MNIST dataset.
+
+    Parameters
+    ----------
+    file_name: str, optional
+        The name of the joblib file.
     """
 
     layers = [
@@ -44,8 +48,12 @@ def model_train(file_name=FILE_NAME):
 
 def model_test(file_name=FILE_NAME):
     """
-    Runs the evaluation and prints out the results
-    :param file_name: the name of the joblib file
+    Evaluates the performances of the model over the MNIST dataset.
+
+    Parameters
+    ----------
+    file_name: str, optional
+        The name of the joblib file.
     """
 
     mnist = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000)

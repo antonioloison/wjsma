@@ -1,5 +1,5 @@
 """
-
+MaxPooling2D layer for cleverhans.
 """
 
 import tensorflow as tf

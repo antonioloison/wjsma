@@ -1,7 +1,6 @@
 """
-The SalienceMapMethod attack with a weighted parameter and returning the adversarial sample and
-the prediction probabilities for each iteration.
-Method inspired from the SalienceMapMethod of the cleverhans module
+The SalienceMapMethod attack with a weighted parameter and returning the adversarial sample and the prediction
+probabilities for each iteration. Method inspired from the SalienceMapMethod of the cleverhans module.
 """
 
 import warnings
@@ -20,18 +19,24 @@ class SaliencyMapMethod(Attack):
     """
     The Jacobian-based Saliency Map Method (Papernot et al. 2016).
     Paper link: https://arxiv.org/pdf/1511.07528.pdf
-    :param model: cleverhans.model.Model
-    :param sess: optional tf.Session
-    :param dtypestr: dtype of the data
-    :param kwargs: passed through to super constructor
-    :note: When not using symbolic implementation in `generate`, `sess` should be provided
     """
 
     def __init__(self, model, sess=None, dtypestr='float32', **kwargs):
         """
-        Create a SaliencyMapMethod instance.
-        Note: the model parameter should be an instance of the
-        cleverhans.model.Model abstraction provided by CleverHans.
+        Initializes the SaliencyMapMethod.
+
+        Note
+        ----
+            The model parameter should be an instance of the cleverhans.model.Model abstraction provided by CleverHans.
+
+        Parameters
+        ----------
+        model: cleverhans.model.Model
+            An instance of the cleverhans.model.Model class.
+        sess: tf.Session, optional
+            The (possibly optional) tf.Session to run graphs in.
+        dtypestr: str, optional
+            Floating point precision to use (change to float64 to avoid numerical instabilities).
         """
 
         super(SaliencyMapMethod, self).__init__(model, sess, dtypestr, **kwargs)
@@ -44,8 +49,20 @@ class SaliencyMapMethod(Attack):
     def generate(self, x, **kwargs):
         """
         Generate symbolic graph for adversarial examples and return.
-        :param x: The model's symbolic inputs.
-        :param kwargs: See `parse_params`
+
+        See Also
+        --------
+            For kwargs, see `parse_params`.
+
+        Parameters
+        ----------
+        x:
+            The model's symbolic inputs.
+
+        Returns
+        -------
+        x_adv:
+            A symbolic representation of the adversarial examples.
         """
 
         assert self.parse_params(**kwargs)
@@ -91,19 +108,32 @@ class SaliencyMapMethod(Attack):
 
         return x_adv
 
-    def parse_params(self, theta=1., gamma=1., clip_min=0., clip_max=1., y_target=None, symbolic_impl=True,
-                     attack="jsma", **kwargs):
+    def parse_params(self, theta=1., gamma=1., clip_min=0., clip_max=1., y_target=None, attack="jsma",
+                     symbolic_impl=True, **kwargs):
         """
-        Take in a dictionary of parameters and applies attack-specific checks
-        before saving them as attributes.
-        Attack-specific parameters:
-        :param theta: (optional float) Perturbation introduced to modified components (can be positive or negative)
-        :param gamma: (optional float) Maximum percentage of perturbed features
-        :param clip_min: (optional float) Minimum component value for clipping
-        :param clip_max: (optional float) Maximum component value for clipping
-        :param y_target: (optional) Target tensor if the attack is targeted
-        :param symbolic_impl: (optional) uses the symbolic version of JSMA (muste be True)
-        :param attack: (optional) switches between JSMA, WJSMA and TSMA
+        Take in a dictionary of parameters and applies attack-specific checks before saving them as attributes.
+
+        Parameters
+        ----------
+        theta: float, optional
+            Perturbation introduced to modified components (can be positive or negative).
+        gamma: float, optional
+            Maximum percentage of perturbed features.
+        clip_min: float, optional
+            Minimum component value for clipping.
+        clip_max: float, optional
+            Maximum component value for clipping.
+        y_target: tf.Tensor, optional
+            Target tensor if the attack is targeted.
+        attack: str, optional
+            The type of used attack (either "jsma", "wjsma" or "tjsma").
+        symbolic_impl: bool, optional
+            Uses the symbolic version of the attack if set to True (must be True)
+
+        Returns
+        -------
+        success: bool
+            True when parsing was successful
         """
 
         self.theta = theta
@@ -130,17 +160,32 @@ def jsma_batch(*args, **kwargs):
 
 def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
     """
-    TensorFlow implementation of the JSMA (see https://arxiv.org/abs/1511.07528
-    for details about the algorithm design choices).
-    :param x: the input placeholder
-    :param y_target: the target tensor
-    :param model: a cleverhans.model.Model object.
-    :param theta: delta for each feature adjustment
-    :param gamma: a float between 0 - 1 indicating the maximum distortion percentage
-    :param clip_min: minimum value for components of the example returned
-    :param clip_max: maximum value for components of the example returned
-    :param attack: switches between JSMA, WJSMA and TSMA
-    :return: a tensor for the adversarial example
+    Modified version of the TensorFlow implementation of the JSMA (see https://arxiv.org/abs/1511.07528 for details
+    about the algorithm design choices).
+
+    Parameters
+    ----------
+    x: tf.Tensor
+        The input tf placeholder.
+    y_target: tf.Tensor
+        The target tensor.
+    model: cleverhans.model.Model
+        The cleverhans model obejct.
+    theta: float
+        The amount by which the pixel are modified.
+    gamma: float
+        Between 0 and 1, it specifies the maximum distortion percentage.
+    clip_min: float
+        Minimum component value for clipping.
+    clip_max: float
+        Maximum component value for clipping.
+    attack: str
+        The type of used attack (either "jsma", "wjsma" or "tjsma").
+
+    Returns
+    -------
+    x_adv: tf.Tensor
+        The tensor of the adversarial samples.
     """
 
     nb_classes = int(y_target.shape[-1].value)
@@ -150,8 +195,7 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
         y_target = tf.cast(y_target, tf.int32)
 
     if x.dtype == tf.float32 and y_target.dtype == tf.float64:
-        warnings.warn("Downcasting labels---this should be harmless unless"
-                      " they are smoothed")
+        warnings.warn("Downcasting labels---this should be harmless unless they are smoothed")
         y_target = tf.cast(y_target, tf.float32)
 
     max_iters = np.floor(nb_features * gamma / 2)
@@ -185,7 +229,7 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
             derivatives = tf.gradients(logits[:, class_ind], x_in)
             list_derivatives.append(derivatives[0])
 
-        if attack == "tsma":
+        if attack == "tjsma":
             grads0 = tf.reshape(tf.stack(list_derivatives), shape=[nb_classes, -1, nb_features])
 
             grads = tf.reshape(1 - x_in, shape=[1, nb_features]) * grads0
@@ -203,7 +247,7 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
 
             grads_target = reduce_sum(grads * target_class, axis=0)
 
-        if attack == "tsma" or attack == "wjsma":
+        if attack == "tjsma" or attack == "wjsma":
             grads_other = reduce_sum(grads * other_classes * tf.reshape(preds, shape=[nb_classes, -1, 1]), axis=0)
         else:
             grads_other = reduce_sum(grads * other_classes, axis=0)
@@ -213,12 +257,12 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
         target_tmp = grads_target
         target_tmp -= increase_coef * reduce_max(tf.abs(grads_target), axis=1, keepdims=True)
         target_sum = tf.reshape(target_tmp, shape=[-1, nb_features, 1]) + \
-                     tf.reshape(target_tmp, shape=[-1, 1, nb_features])
+            tf.reshape(target_tmp, shape=[-1, 1, nb_features])
 
         other_tmp = grads_other
         other_tmp += increase_coef * reduce_max(tf.abs(grads_other), axis=1, keepdims=True)
         other_sum = tf.reshape(other_tmp, shape=[-1, nb_features, 1]) + \
-                    tf.reshape(other_tmp, shape=[-1, 1, nb_features])
+            tf.reshape(other_tmp, shape=[-1, 1, nb_features])
 
         if increase:
             scores_mask = ((target_sum > 0) & (other_sum < 0))

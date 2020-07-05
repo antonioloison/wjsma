@@ -6,25 +6,48 @@ import pandas
 import numpy as np
 import os
 
+from models.model_utils import get_labels
 
-def average_stat(folder, with_max_threshold=True):
+
+def average_stat(model, set_type, attack, with_max_threshold=True):
     """
-    Prints out the stats of the attack
-    :param folder: the csv folder
-    :param with_max_threshold: uses the max threshold as the upper limit to compute stats for unsuccessful samples.
+    Prints out the stats of the attack.
+
+    Parameters
+    ----------
+    model: str
+        The joblib name.
+    set_type: str
+        The type of set used (either "train" or "test")
+    attack: str
+        The type of attack used (either "jsma", "wjsma" or "tjsma")
+    with_max_threshold: bool, optional
+        Uses the max threshold as the upper limit to compute stats for unsuccessful samples if set to True.
     """
 
-    if "mnist" in folder:
+    if "mnist" in model:
         image_size = 784
-        max_distortion = 0.145
+        max_distortion = 0.155
         max_pixel_number = int(image_size * max_distortion / 2) * 2
-    elif "cifar10" in folder:
+
+        from cleverhans.dataset import MNIST
+
+        x_set, y_set = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000).get_set(set_type)
+    elif "cifar10" in model:
         image_size = 3072
-        max_distortion = 0.037
+        max_distortion = 0.039
         max_pixel_number = int(image_size * max_distortion / 2) * 2
+
+        from cleverhans.dataset import CIFAR10
+
+        x_set, y_set = CIFAR10(train_start=0, train_end=50000, test_start=0, test_end=10000).get_set(set_type)
+        y_set = y_set.reshape((y_set.shape[0], 10))
     else:
         raise ValueError(
-            "Invalid folder name, it must have the name of the dataset somewhere either 'mnist' or 'cifar10'")
+            "Invalid folder name, it must have the name of the dataset somewhere either 'mnist' or 'cifar10'"
+        )
+
+    y_set = np.argmax(y_set, axis=1)
 
     average_distortion = 0
     average_distortion_successful = 0
@@ -34,14 +57,17 @@ def average_stat(folder, with_max_threshold=True):
     total_samples = 0
     total_samples_successful = 0
 
+    predicted = np.argmax(get_labels(model, x_set), axis=1)
+
+    folder = "attack/" + model + "/" + attack + "_" + set_type + "/"
+
     for file in os.listdir(folder):
         df = pandas.read_csv(folder + file)
         df_values = df.to_numpy()
 
-        first_class = np.argmax(df_values[image_size:(image_size + 10), 0])
-        good_prediction = (int(df.columns[0][-6]) == first_class)
+        index = int(file.split("_")[2][:-4])
 
-        if not good_prediction:
+        if y_set[index] != predicted[index]:
             continue
 
         for i in range(9):

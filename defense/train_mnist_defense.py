@@ -6,7 +6,7 @@ from cleverhans.dataset import MNIST
 from cleverhans.picklable_model import Conv2D, ReLU, Flatten, Linear, Softmax, MLP
 
 from models.cleverhans_utils import MaxPooling2D
-from models.model_utls import model_training, model_testing
+from models.model_utils import model_training, model_testing
 
 import numpy as np
 
@@ -22,8 +22,12 @@ LEARNING_RATE = 0.001
 
 def model_train(attack):
     """
-    Creates the joblib of LeNet-5 over the MNIST dataset
-    :param weighted: switches between the JSMA and WJSMA defense
+    Creates the joblib file of LeNet-5 trained over the augmented MNIST dataset.
+
+    Parameters
+    ----------
+    attack: str
+        The augmented dataset used (either "jsma", "wjsma" or "tjsma").
     """
 
     layers = [
@@ -58,8 +62,12 @@ def model_train(attack):
 
 def model_test(attack):
     """
-    Runs the evaluation and prints out the results
-    :param weighted: switches between the JSMA and WJSMA defense
+    Evaluates the performances of the model over the original MNIST test set and the augmented set.
+
+    Parameters
+    ----------
+    attack: str
+        The augmented dataset used (either "jsma", "wjsma" or "tjsma").
     """
 
     mnist = MNIST(train_start=TRAIN_START, train_end=TRAIN_END, test_start=TEST_START, test_end=TEST_END)

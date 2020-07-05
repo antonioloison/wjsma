@@ -1,9 +1,9 @@
 """
 Arguments
 -- job [train, test, attack, augment, stats, visualisation]
--- dataset [mnist, cifar10, mnist_defense_jsma, mnist_defense_wjsma]
+-- dataset [mnist, cifar10, mnist_defense_jsma, mnist_defense_wjsma, mnist_defense_tjsma]
 -- settype [test, train]
--- weighted [false, true]
+-- attack [jsma, wjsma, tjsma]
 -- firstindex int
 -- lastindex int
 -- visual [probabilities, single, line, square]
@@ -11,9 +11,9 @@ Arguments
 Available jobs (see README.md for extra information)
 train (dataset)
 test (dataset)
-attack (dataset, settype, weighted, firstindex, lastindex)
-augment (settype, weighted)
-stats (dataset, settype, weighted)
+attack (dataset, settype, attack, firstindex, lastindex)
+augment (settype, attack)
+stats (dataset, settype, attack)
 visualisation (visual)
 """
 
@@ -47,10 +47,10 @@ if __name__ == "__main__":
             from defense.train_mnist_defense import model_train
 
             model_train("wjsma")
-        elif args.dataset == "mnist_defense_tsma":
+        elif args.dataset == "mnist_defense_tjsma":
             from defense.train_mnist_defense import model_train
 
-            model_train("tsma")
+            model_train("tjsma")
         else:
             raise ValueError("Invalid dataset")
     elif args.job == "test":
@@ -70,17 +70,17 @@ if __name__ == "__main__":
             from defense.train_mnist_defense import model_test
 
             model_test("wjsma")
-        elif args.dataset == "mnist_defense_tsma":
+        elif args.dataset == "mnist_defense_tjsma":
             from defense.train_mnist_defense import model_test
 
-            model_test("tsma")
+            model_test("tjsma")
         else:
             raise ValueError("Invalid dataset")
     elif args.job == "attack":
         if args.settype != "test" and args.settype != "train":
             raise ValueError("Invalid set type")
 
-        if args.attack != "jsma" and args.attack != "wjsma" and args.attack != "tsma":
+        if args.attack != "jsma" and args.attack != "wjsma" and args.attack != "tjsma":
             raise ValueError("attack argument is invalid")
         
         from attack.save_images import save_images
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         if args.settype != "test" and args.settype != "train":
             raise ValueError("Invalid set type")
 
-        if args.attack != "jsma" and args.attack != "wjsma" and args.attack != "tsma":
+        if args.attack != "jsma" and args.attack != "wjsma" and args.attack != "tjsma":
             raise ValueError("attack argument is invalid")
 
         from defense.sample_selection import generate_extra_set
@@ -100,12 +100,12 @@ if __name__ == "__main__":
         if args.settype != "test" and args.settype != "train":
             raise ValueError("Invalid set type")
 
-        if args.attack != "jsma" and args.attack != "wjsma" and args.attack != "tsma":
+        if args.attack != "jsma" and args.attack != "wjsma" and args.attack != "tjsma":
             raise ValueError("attack argument is invalid")
 
         from stats.stats import average_stat
 
-        average_stat("attack/" + args.dataset + "/" + args.attack + "_" + args.settype + "/")
+        average_stat(args.dataset, args.settype, args.attack)
     elif args.job == "visualisation":
         if args.visual == "probabilities":
             from visualisation.show_probabilities import visualise

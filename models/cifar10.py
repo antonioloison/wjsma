@@ -6,15 +6,19 @@ from cleverhans.dataset import CIFAR10
 from cleverhans.picklable_model import Conv2D, ReLU, Softmax, MLP, GlobalAveragePool
 
 from models.cleverhans_utils import MaxPooling2D
-from models.model_utls import model_training, model_testing
+from models.model_utils import model_training, model_testing
 
 FILE_NAME = "cifar10.joblib"
 
 
 def model_train(file_name=FILE_NAME):
     """
-    Creates the joblib of the AllConvolutional model for CIFAR-10
-    :param file_name: the name of the joblib file
+    Creates the joblib file of AllConvolutional CIFAR-10 model trained over the MNIST dataset.
+
+    Parameters
+    ----------
+    file_name: str, optional
+        The name of the joblib file.
     """
 
     layers = [Conv2D(64, (3, 3), (1, 1), "SAME"),
@@ -51,8 +55,12 @@ def model_train(file_name=FILE_NAME):
 
 def model_test(file_name=FILE_NAME):
     """
-    Runs the evaluation and prints out the results
-    :param file_name: the name of the joblib file
+    Evaluates the performances of the model over the CIFAR-10 dataset.
+
+    Parameters
+    ----------
+    file_name: str, optional
+        The name of the joblib file.
     """
 
     cifar10 = CIFAR10(train_start=0, train_end=50000, test_start=0, test_end=10000)
