@@ -27,8 +27,8 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
 
     if "mnist" in model:
         image_size = 784
-        max_iter = 57
-        max_distortion = 2 * max_iter / image_size
+        max_iter = 57 * 2
+        max_distortion = max_iter / image_size
         max_pixel_number = int(image_size * max_distortion / 2) * 2
 
         from cleverhans.dataset import MNIST
@@ -36,8 +36,8 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
         x_set, y_set = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000).get_set(set_type)
     elif "cifar10" in model:
         image_size = 3072
-        max_iter = 57
-        max_distortion = 2 * max_iter / image_size
+        max_iter = 57 * 2
+        max_distortion = max_iter / image_size
         max_pixel_number = int(image_size * max_distortion / 2) * 2
 
         from cleverhans.dataset import CIFAR10
