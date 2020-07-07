@@ -137,21 +137,16 @@ dmypy.json
 .DS_Store
 .idea
 
-attack/mnist/simple_test
-attack/mnist/simple_train
-attack/mnist/weighted_test
-attack/mnist/weighted_train
-attack/cifar10/simple_test
-attack/cifar10/simple_train
-attack/cifar10/weighted_test
-attack/cifar10/weighted_train
+cleverhans
+
+attack/mnist
+attack/mnist_defense_jsma
+attack/mnist_defense_wjsma
+attack/mnist_defense_tjsma
+
+attack/cifar10
+attack/cifar10_defense_jsma
+attack/cifar10_defense_wjsma
+attack/cifar10_defense_tjsma
 
 defense/augmented
-defense/mnist_defense_jsma/simple_test
-defense/mnist_defense_jsma/simple_train
-defense/mnist_defense_jsma/weighted_test
-defense/mnist_defense_jsma/weighted_train
-defense/mnist_defense_wjsma/simple_test
-defense/mnist_defense_wjsma/simple_train
-defense/mnist_defense_wjsma/weighted_test
-defense/mnist_defense_wjsma/weighted_train

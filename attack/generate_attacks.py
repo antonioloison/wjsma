@@ -17,16 +17,28 @@ from cleverhans.serial import load
 import os
 
 
-def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, last_index):
+def generate_attacks(save_path, file_path, x_set, y_set, attack, gamma, first_index, last_index):
     """
-    Run evaluation on a saved model
-    :param save_path: path where attacks will be saved
-    :param file_path: path to model to evaluate
-    :param x_set: the input tensors
-    :param y_set: the output tensors
-    :param weighted: boolean representing which version of JSMA you want to test
-    :param first_index: the first sample index
-    :param last_index: the last sample index
+    Applies the saliency map attack against the specified model.
+
+    Parameters
+    ----------
+    save_path: str
+        The path of the folder in which the crafted adversarial samples will be saved.
+    file_path: str
+        The path to the joblib file of the model to attack.
+    x_set: numpy.ndarray
+        The dataset input array.
+    y_set: numpy.ndarray
+        The dataset output array.
+    attack: str
+        The type of used attack (either "jsma", "wjsma" or "tjsma").
+    gamma: float
+            Maximum percentage of perturbed features.
+    first_index:
+        The index of the first image attacked.
+    last_index: int
+        The index of the last image attacked.
     """
 
     if not os.path.exists(save_path):
@@ -44,10 +56,11 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
 
     assert len(model.get_params()) > 0
 
+    # Attack parameters. See SaliencyMapMethod for more information
     jsma = SaliencyMapMethod(model, sess=sess)
-    jsma_params = {'theta': 1, 'gamma': 0.3,
+    jsma_params = {'theta': 1, 'gamma': gamma,
                    'clip_min': 0., 'clip_max': 1.,
-                   'y_target': None, 'weighted': weighted}
+                   'y_target': None, 'attack': attack}
 
     preds = model(x)
 
@@ -74,9 +87,7 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
             percent_perturb = float(nb_changed) / adv_x.reshape(-1).shape[0]
 
             results['number_' + str(sample_ind) + '_' + str(current_class) + '_to_' + str(target)] = \
-                np.concatenate((adv_x_reshape.reshape(-1),
-                                predictions.reshape(-1),
-                                np.array([nb_changed, percent_perturb, res]))
+                np.concatenate((adv_x_reshape.reshape(-1), np.array([nb_changed, percent_perturb, res]))
                                )
 
         sample_vector = sample.reshape(-1)
@@ -86,9 +97,4 @@ def generate_attacks(save_path, file_path, x_set, y_set, weighted, first_index, 
         results['original_image_' + str(sample_ind)] = \
             np.concatenate((sample.reshape(-1), np.zeros((shape2 - shape1,))))
 
-        if weighted:
-            attack_type = 'wjsma'
-        else:
-            attack_type = 'jsma'
-
-        results.to_csv(save_path + '/' + attack_type + '_image_' + str(sample_ind) + '.csv', index=False)
+        results.to_csv(save_path + '/' + attack + '_image_' + str(sample_ind) + '.csv', index=False)

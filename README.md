@@ -9,11 +9,11 @@ In case you encounter some errors after this installation, you can refer to sect
 
 For reproduction, you can use the script `start.py` to run every task used in the paper
 
-`python start.py --job <job> --dataset <dataset> --settype <settype> --weighted <weighted> --firstindex <firstindex> --lastindex <lastindex> --visual <visual>`
+`python start.py --job <job> --dataset <dataset> --settype <settype> --attack <attack> --firstindex <firstindex> --lastindex <lastindex> --visual <visual>`
 - `job` either `"train"`, `"test"`, `"attack"`, `"augment"`, `"stats"` or `"visualisation"`, selects the action that the script will run (see below for examples)
-- `dataset` either `"mnist"`, `"cifar10"`, `"mnist-defense-simple"` or `"mnist-defense-weighted"`, selects the dataset / model on which the job will be performed (note that `mnist-defense-simple` and `mnist-defense-weighted` are the MNIST datasets augmented by JSMA and WJSMA respectively)
+- `dataset` either `"mnist"`, `"cifar10"`, `"mnist_defense_jsma"`, `"mnist_defense_wjsma"`, `"mnist_defense_tjsma"`, `"cifar10_defense_jsma"`, `"cifar10_defense_wjsma"` or `"cifar10_defense_tjsma"`, selects the dataset / model on which the job will be performed (note that `"mnist_defense_jsma"`, `"mnist_defense_wjsma"`, `"mnist_defense_tjsma"`, `"cifar10_defense_jsma"`, `"cifar10_defense_wjsma"` and `"cifar10_defense_tjsma"` are trained on the augmented version of the MNIST and CIFAR10 dataset)
 - `settype` either `"train"` or `"test"`, switches between the train and the test of the dataset
-- `weighted` either `"true"` or `"false"`, switches between Papernot's JSMA and WJSMA
+- `attack` either `"jsma"`, `"wjsma"` or `"tjsma"`, switches between Papernot's JSMA and our implementation of WJSMA and TJSMA
 - `firstindex` an integer (only used for the attack, specifies the index of the first attacked image in the dataset)
 - `lastindex` an integer (only used for the attack, specifies the index of the last attacked image in the dataset)
 - `visual` either `"probabilities"`, `"single"`, `"line"`, `"square"`, switches between the type of image visualisation
@@ -34,27 +34,31 @@ To test an existing LeNet5 model trained over the original MNIST dataset
 
 To generate WJSMA adversarial samples against the previously trained LeNet5 model over the train set of the MNIST dataset
 
-`python start.py --job attack --dataset mnist --settype train --weighted true --firstindex 0 --lastindex 10000`
+`python start.py --job attack --dataset mnist --settype train --attack wjsma --firstindex 0 --lastindex 10000`
+
+To generate TJSMA adversarial samples against the previously trained LeNet5 model over the train set of the MNIST dataset
+
+`python start.py --job attack --dataset mnist --settype train --attack tjsma --firstindex 0 --lastindex 10000`
 
 #### Defenses
 
 To generate the augmented MNIST dataset using the previously crafted adversarial samples (note that you can only augment the original MNIST dataset)
 
-`python start.py --job augment --settype train --weighted true`
+`python start.py --job augment --settype train --attack wjsma`
 
 To train a new LeNet5 model and train it on the augmented MNIST dataset
 
-`python start.py --job train --dataset mnist-defense-weighted`
+`python start.py --job train --dataset mnist_defense_wjsma`
 
 To generate WJSMA adversarial samples against the newly trained LeNet5 model over the test set of the MNIST dataset
 
-`python start.py --job attack --dataset mnist-defense-weighted --settype test --weighted true --firstindex 0 -- lastindex 10000`
+`python start.py --job attack --dataset mnist_defense_wjsma --settype test --attack wjsma --firstindex 0 -- lastindex 10000`
 
 #### Analyse attack and model performances
 
 To print out the performances of the different attacks
 
-`python start.py --job stats --dataset mnist-defense-weighted --settype test --weighted true`
+`python start.py --job stats --dataset mnist_defense_wjsma --settype test --attack wjsma`
 
 #### Visualise images
 
@@ -65,7 +69,7 @@ To show and compare adversarial samples
 ### CSV File Structure of the Adversarial Samples
 
 Each csv file has ten columns. The first nine columns contain the adversarial samples for each target different from the origin class, while the last column contains the original image.
-In each adversarial sample column, the first (784 for MNIST images and 3072 for CIFAR-10 images) lines contain the pixel values of the adversarial samples, the last three lines contain the number of changed pixels, the distortion coefficient and if the attack was successful. The in-between lines contain the probability vectors and are completed with zeros if the attack end between the maximum number of iterations.
+In each adversarial sample column, the first (784 for MNIST images and 3072 for CIFAR-10 images) lines contain the pixel values of the adversarial samples, the last three lines contain the number of changed pixels, the distortion coefficient and if the attack was successful.
 
 ### Model Training and Testing Precautions
 
