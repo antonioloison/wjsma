@@ -5,7 +5,7 @@ MNIST_SETS = ["mnist", "mnist_defense_jsma", "mnist_defense_wjsma", "mnist_defen
 CIFAR10_SETS = ["cifar10", "cifar10_defense_jsma", "cifar10_defense_wjsma", "cifar10_defense_tjsma"]
 
 
-def save_images(model, attack, set_type, first_index, last_index):
+def save_images(model, attack, set_type, first_index, last_index, batch_size):
     """
     Applies the saliency map attack against the specified model.
 
@@ -21,6 +21,8 @@ def save_images(model, attack, set_type, first_index, last_index):
         The index of the first image attacked.
     last_index: int
         The index of the last image attacked.
+    batch_size: int
+        The size of the image batches.
     """
 
     if model in MNIST_SETS:
@@ -45,5 +47,6 @@ def save_images(model, attack, set_type, first_index, last_index):
         attack=attack,
         gamma=gamma,
         first_index=first_index,
-        last_index=last_index
+        last_index=last_index,
+        batch_size=batch_size
     )

@@ -69,23 +69,7 @@ class SaliencyMapMethod(Attack):
 
         if self.symbolic_impl:
             if self.y_target is None:
-                from random import randint
-
-                def random_targets(gt):
-                    result = gt.copy()
-                    nb_s = gt.shape[0]
-                    nb_classes = gt.shape[1]
-
-                    for i in range(nb_s):
-                        result[i, :] = np.roll(result[i, :],
-                                               randint(1, nb_classes - 1))
-
-                    return result
-
-                labels, nb_classes = self.get_or_guess_labels(x, kwargs)
-                self.y_target = tf.py_func(random_targets, [labels],
-                                           self.tf_dtype)
-                self.y_target.set_shape([None, nb_classes])
+                raise NotImplementedError("Non targeted JSMA/WJSMA/TJSMA are not implemented.")
 
             x_adv = jsma_symbolic(
                 x,
@@ -212,43 +196,34 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
         search_domain = tf.reshape(
             tf.cast(x > clip_min, tf_dtype), [-1, nb_features])
 
-    def condition(x_in, y_in, domain_in, i_in, cond_in, predictions):
+    def condition(x_in, y_in, domain_in, i_in, cond_in):
         return tf.logical_and(tf.less(i_in, max_iters), cond_in)
 
-    def body(x_in, y_in, domain_in, i_in, cond_in, predictions):
+    def body(x_in, y_in, domain_in, i_in, cond_in):
         logits = model.get_logits(x_in)
         preds = tf.nn.softmax(logits)
         preds_onehot = tf.one_hot(tf.argmax(preds, axis=1), depth=nb_classes)
-        tensor1 = tf.zeros((1, i_in * 10))
-        tensor2 = tf.zeros((1, (max_iters - 1 - i_in) * 10))
-        reshaped_preds = tf.concat([tensor1, preds, tensor2], 1)
-        predictions = tf.add(predictions, reshaped_preds)
 
         list_derivatives = []
+
         for class_ind in xrange(nb_classes):
             derivatives = tf.gradients(logits[:, class_ind], x_in)
             list_derivatives.append(derivatives[0])
 
+        grads = tf.reshape(tf.stack(list_derivatives), shape=(nb_classes, -1, nb_features))
+
         if attack == "tjsma":
-            grads0 = tf.reshape(tf.stack(list_derivatives), shape=[nb_classes, -1, nb_features])
+            grads = tf.reshape(1 - x_in, shape=(-1, nb_features)) * grads
 
-            grads = tf.reshape(1 - x_in, shape=[1, nb_features]) * grads0
+        target_class = tf.reshape(tf.transpose(y_in, perm=(1, 0)), shape=(nb_classes, -1, 1))
+        other_classes = tf.cast(tf.not_equal(target_class, 1), tf_dtype)
 
-            target_class = tf.reshape(tf.transpose(y_in, perm=[1, 0]), shape=[nb_classes, -1, 1])
-            other_classes = tf.cast(tf.not_equal(target_class, 1), tf_dtype)
-
-            grads_target = reduce_sum(grads * target_class, axis=0)
-
-        else:
-            grads = tf.reshape(tf.stack(list_derivatives), shape=[nb_classes, -1, nb_features])
-
-            target_class = tf.reshape(tf.transpose(y_in, perm=[1, 0]), shape=[nb_classes, -1, 1])
-            other_classes = tf.cast(tf.not_equal(target_class, 1), tf_dtype)
-
-            grads_target = reduce_sum(grads * target_class, axis=0)
+        grads_target = reduce_sum(grads * target_class, axis=0)
 
         if attack == "tjsma" or attack == "wjsma":
-            grads_other = reduce_sum(grads * other_classes * tf.reshape(preds, shape=[nb_classes, -1, 1]), axis=0)
+            preds_transpose = tf.transpose(tf.reshape(preds, shape=(-1, nb_classes, 1)), perm=(1, 0, 2))
+
+            grads_other = reduce_sum(grads * other_classes * preds_transpose, axis=0)
         else:
             grads_other = reduce_sum(grads * other_classes, axis=0)
 
@@ -256,13 +231,13 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
 
         target_tmp = grads_target
         target_tmp -= increase_coef * reduce_max(tf.abs(grads_target), axis=1, keepdims=True)
-        target_sum = tf.reshape(target_tmp, shape=[-1, nb_features, 1]) + \
-            tf.reshape(target_tmp, shape=[-1, 1, nb_features])
+        target_sum = tf.reshape(target_tmp, shape=(-1, nb_features, 1)) + \
+            tf.reshape(target_tmp, shape=(-1, 1, nb_features))
 
         other_tmp = grads_other
         other_tmp += increase_coef * reduce_max(tf.abs(grads_other), axis=1, keepdims=True)
-        other_sum = tf.reshape(other_tmp, shape=[-1, nb_features, 1]) + \
-            tf.reshape(other_tmp, shape=[-1, 1, nb_features])
+        other_sum = tf.reshape(other_tmp, shape=(-1, nb_features, 1)) + \
+            tf.reshape(other_tmp, shape=(-1, 1, nb_features))
 
         if increase:
             scores_mask = ((target_sum > 0) & (other_sum < 0))
@@ -271,7 +246,7 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
 
         scores = tf.cast(scores_mask, tf_dtype) * (-target_sum * other_sum) * zero_diagonal
 
-        best = tf.argmax(tf.reshape(scores, shape=[-1, nb_features * nb_features]), axis=1)
+        best = tf.argmax(tf.reshape(scores, shape=(-1, nb_features * nb_features)), axis=1)
 
         p1 = tf.mod(best, nb_features)
         p2 = tf.floordiv(best, nb_features)
@@ -281,12 +256,12 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
         mod_not_done = tf.equal(reduce_sum(y_in * preds_onehot, axis=1), 0)
         cond = mod_not_done & (reduce_sum(domain_in, axis=1) >= 2)
 
-        cond_float = tf.reshape(tf.cast(cond, tf_dtype), shape=[-1, 1])
+        cond_float = tf.reshape(tf.cast(cond, tf_dtype), shape=(-1, 1))
         to_mod = (p1_one_hot + p2_one_hot) * cond_float
 
         domain_out = domain_in - to_mod
 
-        to_mod_reshape = tf.reshape(to_mod, shape=([-1] + x_in.shape[1:].as_list()))
+        to_mod_reshape = tf.reshape(to_mod, shape=((-1,) + tuple(x_in.shape[1:])))
 
         if increase:
             x_out = tf.minimum(clip_max, x_in + to_mod_reshape * theta)
@@ -296,14 +271,12 @@ def jsma_symbolic(x, y_target, model, theta, gamma, clip_min, clip_max, attack):
         i_out = tf.add(i_in, 1)
         cond_out = reduce_any(cond)
 
-        return x_out, y_in, domain_out, i_out, cond_out, predictions
+        return x_out, y_in, domain_out, i_out, cond_out
 
-    empty_predictions = tf.zeros((1, nb_classes * max_iters))
-
-    x_adv, _, _, _, _, predictions = tf.while_loop(
+    x_adv, _, _, _, _ = tf.while_loop(
         condition,
-        body, [x, y_target, search_domain, 0, True, empty_predictions],
+        body, [x, y_target, search_domain, 0, True],
         parallel_iterations=1
     )
 
-    return x_adv, predictions
+    return x_adv

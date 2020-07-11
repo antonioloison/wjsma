@@ -17,9 +17,9 @@ from cleverhans.serial import load
 import os
 
 
-def generate_attacks(save_path, file_path, x_set, y_set, attack, gamma, first_index, last_index):
+def generate_attacks(save_path, file_path, x_set, y_set, attack, gamma, first_index, last_index, batch_size=1):
     """
-    Applies the saliency map attack against the specified model.
+    Applies the voting saliency map attack against the specified model in targeted mode.
 
     Parameters
     ----------
@@ -39,6 +39,8 @@ def generate_attacks(save_path, file_path, x_set, y_set, attack, gamma, first_in
         The index of the first image attacked.
     last_index: int
         The index of the last image attacked.
+    batch_size: int
+        The size of the image batches.
     """
 
     if not os.path.exists(save_path):
@@ -56,45 +58,76 @@ def generate_attacks(save_path, file_path, x_set, y_set, attack, gamma, first_in
 
     assert len(model.get_params()) > 0
 
-    # Attack parameters. See SaliencyMapMethod for more information
     jsma = SaliencyMapMethod(model, sess=sess)
-    jsma_params = {'theta': 1, 'gamma': gamma,
-                   'clip_min': 0., 'clip_max': 1.,
-                   'y_target': None, 'attack': attack}
+    jsma_params = {'theta': 1, 'gamma': gamma, 'clip_min': 0., 'clip_max': 1., 'y_target': None, 'attack': attack}
 
     preds = model(x)
 
-    for sample_ind in range(first_index, last_index):
-        results = pd.DataFrame()
+    y_set = np.argmax(y_set, axis=1).astype(int)
 
-        print('Attacking input %i/%i' % (sample_ind + 1, last_index))
+    indices = range(first_index, last_index)
+    batch_indices = [indices[x * batch_size:batch_size * (x + 1)] for x in
+                     range(len(indices) // batch_size + (len(indices) % batch_size != 0))]
 
-        sample = x_set[sample_ind:(sample_ind + 1)]
-        current_class = int(np.argmax(y_set[sample_ind]))
-        target_classes = other_classes(nb_classes, current_class)
+    sample_count = last_index - first_index
+    sample_crafted = 0
 
-        for target in target_classes:
-            one_hot_target = np.zeros((1, nb_classes), dtype=np.float32)
-            one_hot_target[0, target] = 1
-            jsma_params['y_target'] = one_hot_target
-            adv_x, predictions = jsma.generate_np(sample, **jsma_params)
+    for batch in batch_indices:
+        samples = []
+        sample_classes = []
 
-            res = int(model_argmax(sess, x, preds, adv_x) == target)
+        current_class_batch = []
+        target_classes_batch = []
 
-            adv_x_reshape = adv_x.reshape(-1)
-            test_in_reshape = x_set[sample_ind].reshape(-1)
-            nb_changed = np.where(adv_x_reshape != test_in_reshape)[0].shape[0]
-            percent_perturb = float(nb_changed) / adv_x.reshape(-1).shape[0]
+        for sample_index in batch:
+            sample = x_set[sample_index]
+            current_class = y_set[sample_index]
+            target_classes = other_classes(nb_classes, current_class)
 
-            results['number_' + str(sample_ind) + '_' + str(current_class) + '_to_' + str(target)] = \
-                np.concatenate((adv_x_reshape.reshape(-1), np.array([nb_changed, percent_perturb, res]))
-                               )
+            current_class_batch.append(current_class)
+            target_classes_batch += target_classes
 
-        sample_vector = sample.reshape(-1)
-        shape1 = sample_vector.shape[0]
-        shape2 = results.shape[0]
+            samples.append(np.repeat(sample.reshape((1,) + sample.shape), 9, axis=0))
 
-        results['original_image_' + str(sample_ind)] = \
-            np.concatenate((sample.reshape(-1), np.zeros((shape2 - shape1,))))
+            y_target = np.zeros((len(target_classes), nb_classes))
+            y_target[np.arange(len(target_classes)), target_classes] = 1
 
-        results.to_csv(save_path + '/' + attack + '_image_' + str(sample_ind) + '.csv', index=False)
+            sample_classes.append(y_target)
+
+        samples = np.concatenate(samples)
+        sample_classes = np.concatenate(sample_classes)
+
+        jsma_params['y_target'] = sample_classes
+        adversarial_batch = jsma.generate_np(samples, **jsma_params)
+
+        for index, sample_index in zip(range(len(batch)), batch):
+            results = pd.DataFrame()
+
+            adversarial_samples = adversarial_batch[index * (nb_classes - 1):(index + 1) * (nb_classes - 1)]
+            current_class = current_class_batch[index]
+            target_classes = target_classes_batch[index * (nb_classes - 1):(index + 1) * (nb_classes - 1)]
+
+            for target, adv_sample in zip(target_classes, adversarial_samples):
+                adv_sample = adv_sample.reshape((1, 28, 28, 1))
+
+                res = int(model_argmax(sess, x, preds, adv_sample) == target)
+
+                adv_x_reshape = adv_sample.reshape(-1)
+                test_in_reshape = x_set[sample_index].reshape(-1)
+                nb_changed = np.where(adv_x_reshape != test_in_reshape)[0].shape[0]
+                percent_perturb = float(nb_changed) / adv_x_reshape.shape[0]
+
+                results['number_' + str(sample_index) + '_' + str(current_class) + '_to_' + str(target)] = \
+                    np.concatenate(
+                        [adv_x_reshape.reshape(-1), np.array([nb_changed, percent_perturb, res])]
+                    )
+
+            sample = samples[index * (nb_classes - 1)]
+
+            results['original_image_' + str(sample_index)] = np.concatenate([sample.reshape(-1), np.zeros((3,))])
+
+            results.to_csv(save_path + '/' + attack + '_image_' + str(sample_index) + '.csv', index=False)
+
+        sample_crafted += len(batch)
+
+        print("Done: ", sample_crafted, "/", sample_count)

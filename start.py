@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser.add_argument('--attack', type=str, default="jsma")
     parser.add_argument('--firstindex', type=int, default=0)
     parser.add_argument('--lastindex', type=int, default=1)
+    parser.add_argument('--batchsize', type=int, default=1)
     parser.add_argument('--visual', type=str, default='single')
     args = parser.parse_args()
 
@@ -85,7 +86,7 @@ if __name__ == "__main__":
         
         from attack.save_images import save_images
         
-        save_images(args.dataset, args.attack, args.settype, args.firstindex, args.lastindex)
+        save_images(args.dataset, args.attack, args.settype, args.firstindex, args.lastindex, args.batchsize)
     elif args.job == "augment":
         if args.settype != "test" and args.settype != "train":
             raise ValueError("Invalid set type")

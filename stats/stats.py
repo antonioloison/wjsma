@@ -27,8 +27,8 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
 
     if "mnist" in model:
         image_size = 784
-        max_iter = 57 * 2
-        max_distortion = max_iter / image_size
+        max_iter = 57
+        max_distortion = 2 * max_iter / image_size
         max_pixel_number = int(image_size * max_distortion / 2) * 2
 
         from cleverhans.dataset import MNIST
@@ -36,8 +36,8 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
         x_set, y_set = MNIST(train_start=0, train_end=60000, test_start=0, test_end=10000).get_set(set_type)
     elif "cifar10" in model:
         image_size = 3072
-        max_iter = 57 * 2
-        max_distortion = max_iter / image_size
+        max_iter = 57
+        max_distortion = 2 * max_iter / image_size
         max_pixel_number = int(image_size * max_distortion / 2) * 2
 
         from cleverhans.dataset import CIFAR10
@@ -82,7 +82,7 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
                 average_pixel_number += df_values[-3, i]
                 average_distortion += df_values[-2, i]
 
-            if df_values[-3, i] < max_iter:
+            if df_values[-3, i] < max_iter * 2:  # 2 modified pixel per iteration
                 total_samples_successful += 1
 
                 average_pixel_number_successful += df_values[-3, i]
@@ -90,7 +90,7 @@ def average_stat(model, set_type, attack, with_max_threshold=True):
 
     print(folder)
     print("----------------------")
-    print("WELL PREDICTED ORIGINAL SAMPLES:", total_samples)
+    print("WELL PREDICTED ORIGINAL SAMPLES:", total_samples / 9)
     print("SUCCESS RATE (MISS CLASSIFIED):", total_samples_successful / total_samples)
     print("AVERAGE NUMBER OF CHANGED PIXELS:", average_pixel_number / total_samples)
     print("AVERAGE DISTORTION:", average_distortion / total_samples)
