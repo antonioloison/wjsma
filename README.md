@@ -1,4 +1,6 @@
-# An Efficient Probabilistic Jacobian-based Saliency Map Attack in Machine Learning (WJSMA)
+# An Efficient Probabilistic Jacobian-based Saliency Map Attack in Machine Learning
+
+The most recent version of this attack is available on this repository: https://github.com/probabilistic-jsmas/probabilistic-jsmas
 
 ## Installation
 
